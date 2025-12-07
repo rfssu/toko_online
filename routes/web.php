@@ -37,7 +37,7 @@ Auth::routes();
 Route::get('/profile', [ProfileController::class, 'index']);
 Route::post('/profile', [ProfileController::class, 'update']);
 
-// Route::get('/history', [HistoryController::class, 'index']);
+Route::get('/history', [HistoryController::class, 'index']);
 // Route::get('/history/{id}', [HistoryController::class, 'detail']);
 // Route::get('/history/{id}/pdf', [HistoryController::class, 'pdf']);
 

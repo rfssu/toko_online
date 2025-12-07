@@ -68,18 +68,3 @@
 .modal {
     margin: 0 !important;
 }
-.modal-backdrop {
-    backdrop-filter: blur(4px);
-    background-color: rgba(0, 0, 0, 0.3);
-}
-/* Untuk Chrome, Safari, Edge, Opera */
-input::-webkit-outer-spin-button,
-input::-webkit-inner-spin-button {
-    -webkit-appearance: none;
-    margin: 0;
-}
-
-/* Untuk Firefox */
-input[type="number"] {
-    -moz-appearance: textfield;
-}

@@ -17,16 +17,17 @@ class UserController extends Controller
     }
     public function index()
     {
-        $users = User::all();
+        $models = User::all();
+        
         return view('seller/pages/users/index', get_defined_vars());
     }
 
     public function form($id = null)
     {
-        $models = $id ? $this->findModel(['id' => $id]) : new User;
+        $model = $id ? $this->findModel(['id' => $id]) : new User;
         $user = $this->user;
 
-        return view('user.form', get_defined_vars());
+        return view('seller/pages/users/form', get_defined_vars());
     }
 
     private function findModel(array $params)

@@ -5,17 +5,19 @@
         Olah User
     </a>
 @endsection
-
+@php
+    $createRoute = fn() => route('users.create');
+@endphp
 @section('pages')
     <div class="card bg-base-100 shadow-xl">
         <div class="card-body">
             <!-- Header -->
             <div class="flex justify-between items-center mb-4">
-                <h2 class="card-title">Daftar Users</h2>
-                <label for="form-modal" class="btn btn-primary">
+                <h1 class="card-title text-lg "><b>Daftar Users</b></h1>
+                <a href="{{ $createRoute() }}" onclick="modalFormAjax(this, event)" class="btn btn-primary">
                     <i class="ri-add-line mr-2"></i>
                     Tambah User
-                </label>
+                </a>
             </div>
 
             <!-- Table -->
@@ -24,34 +26,32 @@
                     <!-- head -->
                     <thead>
                         <tr>
-                            <th></th>
-                            <th>Name</th>
-                            <th>Job</th>
-                            <th>Favorite Color</th>
+                            <th>No</th>
+                            <th>Nama</th>
+                            <th>Email</th>
+                            <th>Role</th>
+                            <th>Status</th>
+                            <th>No HP</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <!-- row 1 -->
-                        <tr>
-                            <th>1</th>
-                            <td>Cy Ganderton</td>
-                            <td>Quality Control Specialist</td>
-                            <td>Blue</td>
-                        </tr>
-                        <!-- row 2 -->
-                        <tr>
-                            <th>2</th>
-                            <td>Hart Hagerty</td>
-                            <td>Desktop Support Technician</td>
-                            <td>Purple</td>
-                        </tr>
-                        <!-- row 3 -->
-                        <tr>
-                            <th>3</th>
-                            <td>Brice Swyre</td>
-                            <td>Tax Accountant</td>
-                            <td>Red</td>
-                        </tr>
+                        @php
+                            $no = 1;
+                        @endphp
+                        @forelse ($models as $model)
+                            <tr>
+                                <td>{{ $no++ }}</td>
+                                <td>{{ $model->name }}</td>
+                                <td>{{ $model->email }}</td>
+                                <td>{{ $model->role }}</td>
+                                <td>{{ $model->status }}</td>
+                                <td>{{ $model->no_hp }}</td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="6" class="text-center">Tidak ada data</td>
+                            </tr>
+                        @endforelse
                     </tbody>
                 </table>
             </div>
