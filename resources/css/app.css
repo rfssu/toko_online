@@ -1,0 +1,6 @@
+@import "../../node_modules/remixicon/fonts/remixicon.css";
+@import "../../node_modules/sweetalert2/dist/sweetalert2.css";
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;

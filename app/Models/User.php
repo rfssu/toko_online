@@ -21,7 +21,15 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'alamat',
+        'no_hp',
+        'role',
+        'status',
     ];
+
+    public const ROLE = ['admin', 'seller', 'buyer'];
+
+    public const STATUS = ['on', 'off'];
 
     /**
      * The attributes that should be hidden for serialization.
@@ -45,6 +53,6 @@ class User extends Authenticatable
 
     public function pesanan()
     {
-        return $this->hasMany('App\Models\Pesanan','user_id','id');
+        return $this->hasMany('App\Models\Pesanan', 'user_id', 'id');
     }
 }

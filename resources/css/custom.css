@@ -1,0 +1,85 @@
+.fade-in {
+    animation: fadeIn 0.5s ease-in;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.hover-scale {
+    transition: transform 0.2s ease;
+}
+
+.hover-scale:hover {
+    transform: scale(1.02);
+}
+.swap-input {
+    appearance: none;
+    -webkit-appearance: none;
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+.scrollbar-thin::-webkit-scrollbar {
+    width: 8px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb {
+    background-color: rgba(155, 155, 155, 0.5);
+    border-radius: 20px;
+    border: transparent;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(155, 155, 155, 0.7);
+}
+
+/* Ensure proper stacking on mobile */
+@media (max-width: 1023px) {
+    .drawer-side {
+        z-index: 50;
+    }
+}
+
+:root:has(
+        :is(
+                .modal-open,
+                .modal:target,
+                .modal-toggle:checked + .modal,
+                .modal[open]
+            )
+    ) {
+    overflow: hidden;
+    scrollbar-gutter: auto !important;
+}
+.modal {
+    margin: 0 !important;
+}
+.modal-backdrop {
+    backdrop-filter: blur(4px);
+    background-color: rgba(0, 0, 0, 0.3);
+}
+/* Untuk Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+/* Untuk Firefox */
+input[type="number"] {
+    -moz-appearance: textfield;
+}
