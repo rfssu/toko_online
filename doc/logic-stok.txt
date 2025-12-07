@@ -1,0 +1,48 @@
+stok = 10
+book = 0
+
+pelanggan a CO =  6
+
+stok = 10
+book = 0 + CO = 6
+total = stok - book = 4
+
+pelanggan b CO = 2
+
+stok = 10
+book = 6 + CO = 8
+total = stok - book = 2
+
+pelanggan a Pickup = 6
+
+stok = 10 - pickup = 4
+book = 8 - pickup = 2
+total = stok - book = 2
+
+pelanggan c CO : 2
+
+stok = 4
+book =  + CO = 4
+total = stok - book = 0
+
+pelanggan b pickup = 2
+
+stok = 4 - pickup = 2
+book = 4 - pickup = 2
+total = stok - book = 0
+
+pelanggan c pickup = 2
+
+stok = 2 - pickup = 0
+book = 2 - pickup = 0
+total = stok - book = 0
+
+kesimpulan yg tampil di list barang:
+
+stok = 0
+book = 0
+total = stok - book = 0
+
+kesimpulan:
+saat checkout = book bertambah
+saat pickup = book berkurang dan stok berkurang
