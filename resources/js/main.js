@@ -3,19 +3,22 @@ document.addEventListener("DOMContentLoaded", function () {
     const themeToggle = document.querySelector(".theme-controller");
 
     if (themeToggle) {
-        if (localStorage.theme === "dark") {
-            document.documentElement.setAttribute("data-theme", "dark");
+        if (localStorage.theme === "halloween") {
+            document.documentElement.setAttribute("data-theme", "halloween");
             themeToggle.checked = true;
         }
 
         // Event listener untuk toggle tema
         themeToggle.addEventListener("change", function () {
             if (this.checked) {
-                document.documentElement.setAttribute("data-theme", "dark");
-                localStorage.theme = "dark";
+                document.documentElement.setAttribute(
+                    "data-theme",
+                    "halloween"
+                );
+                localStorage.theme = "halloween";
             } else {
-                document.documentElement.setAttribute("data-theme", "light");
-                localStorage.theme = "light";
+                document.documentElement.setAttribute("data-theme", "retro");
+                localStorage.theme = "retro";
             }
         });
     }

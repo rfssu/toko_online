@@ -23,6 +23,6 @@ export default {
     plugins: [forms, daisyui],
 
     daisyui: {
-        themes: ["light", "dark", "corporate"],
+        themes: ["retro", "halloween"],
     },
 };
