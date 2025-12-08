@@ -55,7 +55,23 @@
             <div class="flex items-center gap-4 p-4 bg-base-100 rounded-lg shadow-sm">
                 <div class="avatar">
                     <div class="w-10 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2">
-                        <img src="https://ui-avatars.com/api/?name={{ Auth::user()->name }}&background=random" />
+                        @php
+                            $initials = strtoupper(substr(Auth::user()->name, 0, 2));
+                            $colors = [
+                                'bg-red-500',
+                                'bg-blue-500',
+                                'bg-green-500',
+                                'bg-yellow-500',
+                                'bg-purple-500',
+                                'bg-teal-500',
+                            ];
+                            $bg = $colors[ord($initials) % count($colors)];
+                        @endphp
+
+                        <div
+                            class="w-10 h-10 rounded-full {{ $bg }} flex items-center justify-center text-white font-bold">
+                            {{ $initials }}
+                        </div>
                     </div>
                 </div>
                 <div>

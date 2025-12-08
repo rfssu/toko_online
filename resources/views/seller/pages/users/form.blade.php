@@ -15,40 +15,66 @@
             @method('PUT')
         @endif
 
-        <input type="text" name="name" placeholder="Nama" class="input input-bordered w-full max-w-xs" required />
+        <div class="form-control">
+            <input type="text" name="name" placeholder="Nama" class="input input-bordered w-full" />
+            <span class="text-error text-sm mt-1 hidden"></span>
+        </div>
 
-        <input type="email" name="email" placeholder="Email" class="input input-bordered w-full max-w-xs"
-            required />
+        <div class="form-control">
+            <input type="email" name="email" placeholder="Email" class="input input-bordered w-full" />
+            <span class="text-error text-sm mt-1 hidden"></span>
+        </div>
 
-        <select name="role" class="select select-bordered w-full" required>
-            <option value="">Pilih Role</option>
-            <option value="admin">Admin</option>
-            <option value="user">User</option>
-        </select>
+        <div class="form-control">
+            <select name="role" class="select select-bordered w-full">
+                <option value="">Pilih Role</option>
+                @foreach (\App\Models\User::ROLE as $key => $value)
+                    <option value="{{ $key }}" {{ $model?->role == $key ? 'selected' : '' }}>
+                        {{ $value }}
+                    </option>
+                @endforeach
+            </select>
+            <span class="text-error text-sm mt-1 hidden"></span>
+        </div>
 
-        <select name="status" class="select select-bordered w-full" required>
-            <option value="">Pilih Status</option>
-            <option value="active">Aktif</option>
-            <option value="inactive">Tidak Aktif</option>
-        </select>
+        <div class="form-control">
+            <select name="status" class="select select-bordered w-full">
+                <option value="">Pilih Status</option>
+                @foreach (\App\Models\User::STATUS as $key => $value)
+                    <option value="{{ $key }}" {{ $model?->status == $key ? 'selected' : '' }}>
+                        {{ $value }}
+                    </option>
+                @endforeach
+            </select>
+            <span class="text-error text-sm mt-1 hidden"></span>
+        </div>
 
-        <input type="tel" name="no_hp" placeholder="No HP" class="input input-bordered w-full max-w-xs" />
+        <div class="form-control">
+            <input type="tel" name="no_hp" placeholder="No HP" class="input input-bordered w-full" />
+            <span class="text-error text-sm mt-1 hidden"></span>
+        </div>
 
-        <textarea name="alamat" placeholder="Alamat" class="textarea textarea-bordered w-full"></textarea>
+        <div class="form-control">
+            <textarea name="alamat" placeholder="Alamat" class="textarea textarea-bordered w-full"></textarea>
+            <span class="text-error text-sm mt-1 hidden"></span>
+        </div>
 
-        <input type="password" name="password" placeholder="Password" class="input input-bordered w-full max-w-xs"
-            {{ empty($model->id) ? 'required' : '' }} />
+        <div class="form-control">
+            <input type="password" name="password" placeholder="Password" class="input input-bordered w-full" />
+            <span class="text-error text-sm mt-1 hidden"></span>
+        </div>
 
-        <input type="password" name="password_confirmation" placeholder="Ulangi Password"
-            class="input input-bordered w-full max-w-xs" {{ empty($model->id) ? 'required' : '' }} />
-            
+        <div class="form-control">
+            <input type="password" name="password_confirmation" placeholder="Ulangi Password"
+                class="input input-bordered w-full" />
+            <span class="text-error text-sm mt-1 hidden"></span>
+        </div>
 
         <button type="submit" class="btn btn-primary w-full">
             {{ empty($model->id) ? 'Simpan' : 'Update' }}
         </button>
     </form>
 </div>
-
 <script id="data-json" type="application/json">
     {!! $model->toJson(JSON_FORCE_OBJECT) !!}
 </script>

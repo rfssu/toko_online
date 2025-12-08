@@ -35,8 +35,23 @@
             <div class="dropdown dropdown-end">
                 <label tabindex="0" class="btn btn-ghost btn-circle avatar online">
                     <div class="w-10 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2">
-                        <img src="https://ui-avatars.com/api/?name={{ Auth::user()->name }}&background=random"
-                            alt="{{ Auth::user()->name }}" />
+                        @php
+                            $initials = strtoupper(substr(Auth::user()->name, 0, 2));
+                            $colors = [
+                                'bg-red-500',
+                                'bg-blue-500',
+                                'bg-green-500',
+                                'bg-yellow-500',
+                                'bg-purple-500',
+                                'bg-teal-500',
+                            ];
+                            $bg = $colors[ord($initials) % count($colors)];
+                        @endphp
+
+                        <div
+                            class="w-10 h-10 rounded-full {{ $bg }} flex items-center justify-center text-white font-bold">
+                            {{ $initials }}
+                        </div>
                     </div>
                 </label>
                 <ul tabindex="0" class="menu dropdown-content z-[1] p-2 shadow-xl bg-base-200 rounded-box w-52 mt-4">

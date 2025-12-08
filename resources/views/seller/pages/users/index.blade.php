@@ -7,6 +7,8 @@
 @endsection
 @php
     $createRoute = fn() => route('users.create');
+    $editRoute = fn($model) => route('users.edit', $model->id);
+    $deleteRoute = fn($model) => route('users.destroy', $model->id);
 @endphp
 @section('pages')
     <div class="card bg-base-100 shadow-xl">
@@ -27,6 +29,7 @@
                     <thead>
                         <tr>
                             <th>No</th>
+                            <th>Aksi</th>
                             <th>Nama</th>
                             <th>Email</th>
                             <th>Role</th>
@@ -41,10 +44,20 @@
                         @forelse ($models as $model)
                             <tr>
                                 <td>{{ $no++ }}</td>
+                                <td>
+                                    <a href="{{ $deleteRoute($model) }}" onclick="modalDeleteConfirm(this, event)"
+                                        data-name="{{ $model->name }}" class="btn btn-ghost btn-sm">
+                                        <i class="ri-delete-bin-line"></i>
+                                    </a>
+                                    <a href="{{ $editRoute($model) }}" onclick="modalFormAjax(this, event)"
+                                        class="btn btn-ghost btn-sm">
+                                        <i class="ri-pencil-line"></i>
+                                    </a>
+                                </td>
                                 <td>{{ $model->name }}</td>
                                 <td>{{ $model->email }}</td>
-                                <td>{{ $model->role }}</td>
-                                <td>{{ $model->status }}</td>
+                                <td>{{ $model->role_val }}</td>
+                                <td>{{ $model->status_val }}</td>
                                 <td>{{ $model->no_hp }}</td>
                             </tr>
                         @empty
