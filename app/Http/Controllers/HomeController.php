@@ -1,36 +1,21 @@
 <?php
 
 namespace App\Http\Controllers;
-use App\Models\Barang;
+
 use Illuminate\Http\Request;
-use App\Models\Pesanan;
-
-
-
-
+use App\Models\Barang; // <-- Panggil Model Barang
 
 class HomeController extends Controller
 {
-    /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
-    public function __construct()
+    public function index()
     {
-        $this->middleware('auth');
-    }
+        // 1. AMBIL DATA DARI TABEL 'BARANGS'
+        $barangs = Barang::all(); 
 
-    /**
-     * Show the application dashboard.
-     *
-     * @return \Illuminate\Contracts\Support\Renderable
-     */
-    public function index(Request $request)
-    {
-        $barangs = Barang::paginate(200);
-        $query = $request->get('search');
-    $barangs = Barang::where('nama_barang', 'like', '%' . $query . '%')->paginate(10);
-        return view('home',compact('barangs'));
+        // 2. RETURN KE VIEW DI DALAM FOLDER BUYER
+        // Perhatikan tanda titik (.) sebagai pemisah folder
+        return view('buyer.home', [
+            'data_barang' => $barangs
+        ]);
     }
 }

@@ -6,6 +6,9 @@ use App\Http\Controllers\PesanController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ForgotPasswordController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\BarangController;
+use App\Http\Controllers\HomeController;
+use App\Http\Controllers\AuthController;
 
 /*
 |--------------------------------------------------------------------------
@@ -18,37 +21,39 @@ use App\Http\Controllers\UserController;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
+// Public Routes
+Route::get('/', [HomeController::class, 'index'])->name('home');
+
+
+// Authenticated Routes
+
+// Ini memberi nama rute 'login' yang dicari Laravel
+Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
+Route::post('/login', [AuthController::class, 'login'])->name('login.perform');
+
+Route::middleware('guest')->group(function () {
+    // Login (Yang sudah Anda buat)
+    Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
+    Route::post('/login', [AuthController::class, 'login'])->name('login.perform');
+
+    // --- TAMBAHKAN INI (OBAT ERROR REGISTER) ---
+    // Menampilkan form daftar
+    Route::get('/register', [AuthController::class, 'showRegisterForm'])->name('register');
+    // Memproses pendaftaran
+    Route::post('/register', [AuthController::class, 'register'])->name('register.perform');
 });
 
-
-
-Auth::routes();
-
-// Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
-// Route::get('/pesan/{id}', [PesanController::class, 'index']);
-// Route::post('/pesan/{id}', [PesanController::class, 'pesan']);
-// Route::get('/check-out', [PesanController::class, 'check_out']);
-// Route::delete('/check-out/{id}', [PesanController::class, 'delete']);
-
-// Route::get('/konfirmasi-check-out', [PesanController::class, 'konfirmasi']);
-
-Route::get('/profile', [ProfileController::class, 'index']);
-Route::post('/profile', [ProfileController::class, 'update']);
-
-Route::get('/history', [HistoryController::class, 'index']);
-// Route::get('/history/{id}', [HistoryController::class, 'detail']);
-// Route::get('/history/{id}/pdf', [HistoryController::class, 'pdf']);
-
-// Route::get('forget-password', [ForgotPasswordController::class, 'showForgetPasswordForm'])->name('forget.password.get');
-// Route::post('forget-password', [ForgotPasswordController::class, 'submitForgetPasswordForm'])->name('forget.password.post');
-// Route::get('reset-password/{token}', [ForgotPasswordController::class, 'showResetPasswordForm'])->name('reset.password.get');
-// Route::post('reset-password', [ForgotPasswordController::class, 'submitResetPasswordForm'])->name('reset.password.post');
-
 Route::middleware(['auth'])->group(function () {
+
+    // --- TAMBAHKAN BARIS INI (OBAT ERROR LOGOUT) ---
+    Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+    
     Route::get('dashboard', function () {
         return view('seller/pages/dashboard');
     })->name('dashboard');
+    
     Route::resource('users', UserController::class);
+    Route::resource('barangs', BarangController::class);
 });
+
+
