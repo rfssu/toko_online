@@ -82,6 +82,7 @@ class HomeController extends Controller
             'email' => 'required|email|max:255',
             'no_hp' => 'nullable|string|max:15',
             'alamat' => 'nullable|string|max:500',
+
         ]);
         // 2. AMBIL USER YANG SEDANG LOGIN
         $user = Auth::user();

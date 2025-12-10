@@ -118,7 +118,7 @@
 
                     {{-- Gambar Produk --}}
                     <div class="relative aspect-square bg-gray-100 rounded-lg mb-3 overflow-hidden">
-                        <img src="{{ $item->gambar ? asset('storage/' . $item->gambar) : 'https://via.placeholder.com/300?text=No+Image' }}"
+                        <img src="{{ $item->file('gambar')->hasFile() ? $item->file('gambar')->preview() : 'https://via.placeholder.com/300?text=No+Image' }}"
                             alt="{{ $item->nama_barang }}"
                             class="w-full h-full object-cover group-hover:scale-110 transition duration-500">
 
