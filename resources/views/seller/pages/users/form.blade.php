@@ -17,12 +17,10 @@
 
         <div class="form-control">
             <input type="text" name="name" placeholder="Nama" class="input input-bordered w-full" />
-            <span class="text-error text-sm mt-1 hidden"></span>
         </div>
 
         <div class="form-control">
             <input type="email" name="email" placeholder="Email" class="input input-bordered w-full" />
-            <span class="text-error text-sm mt-1 hidden"></span>
         </div>
 
         <div class="form-control">
@@ -34,7 +32,6 @@
                     </option>
                 @endforeach
             </select>
-            <span class="text-error text-sm mt-1 hidden"></span>
         </div>
 
         <div class="form-control">
@@ -46,28 +43,23 @@
                     </option>
                 @endforeach
             </select>
-            <span class="text-error text-sm mt-1 hidden"></span>
         </div>
 
         <div class="form-control">
             <input type="tel" name="no_hp" placeholder="No HP" class="input input-bordered w-full" />
-            <span class="text-error text-sm mt-1 hidden"></span>
         </div>
 
         <div class="form-control">
             <textarea name="alamat" placeholder="Alamat" class="textarea textarea-bordered w-full"></textarea>
-            <span class="text-error text-sm mt-1 hidden"></span>
         </div>
 
         <div class="form-control">
             <input type="password" name="password" placeholder="Password" class="input input-bordered w-full" />
-            <span class="text-error text-sm mt-1 hidden"></span>
         </div>
 
         <div class="form-control">
             <input type="password" name="password_confirmation" placeholder="Ulangi Password"
                 class="input input-bordered w-full" />
-            <span class="text-error text-sm mt-1 hidden"></span>
         </div>
 
         <button type="submit" class="btn btn-primary w-full">
