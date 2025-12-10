@@ -11,13 +11,17 @@ class HomeController extends Controller
 {
     public function index()
     {
-        // 1. AMBIL DATA DARI TABEL 'BARANGS'
-        $barangs = Barang::all();
+        // 1. AMBIL DATA BEST SELLER (simulasi: 8 produk pertama)
+        // TODO: Nanti bisa diganti dengan query berdasarkan jumlah penjualan
+        $bestSellers = Barang::take(8)->get();
 
-        // 2. RETURN KE VIEW DI DALAM FOLDER BUYER
-        // Perhatikan tanda titik (.) sebagai pemisah folder
+        // 2. AMBIL PRODUK BARU (8 produk terbaru)
+        $newProducts = Barang::latest()->take(8)->get();
+
+        // 3. RETURN KE VIEW DI DALAM FOLDER BUYER
         return view('buyer.home', [
-            'data_barang' => $barangs
+            'best_sellers' => $bestSellers,
+            'new_products' => $newProducts
         ]);
     }
 
