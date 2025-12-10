@@ -1,6 +1,6 @@
 @php
-// Tentukan mau lari ke Route Store (Baru) atau Update (Edit)
-$action = $model->id ? route('barangs.update', $model->id) : route('barangs.store');
+    // Tentukan mau lari ke Route Store (Baru) atau Update (Edit)
+    $action = $model->id ? route('barangs.update', $model->id) : route('barangs.store');
 @endphp
 
 <div class="p-6">
@@ -9,8 +9,8 @@ $action = $model->id ? route('barangs.update', $model->id) : route('barangs.stor
     <form method="POST" action="{{ $action }}" id="form-elem" class="space-y-3" enctype="multipart/form-data">
         @csrf
 
-        @if($model->id)
-        @method('PUT')
+        @if ($model->id)
+            @method('PUT')
         @endif
 
         <div class="form-control">
@@ -25,15 +25,15 @@ $action = $model->id ? route('barangs.update', $model->id) : route('barangs.stor
                 <input type="file" name="gambar" class="file-input file-input-bordered w-full" />
             </fieldset>
 
-            @if(isset($model) && $model->gambar)
-            <div class="mt-4">
-                <p class="text-sm mb-2 font-bold">Gambar Saat Ini:</p>
-                <div class="avatar">
-                    <div class="w-24 rounded">
-                        <img src="{{ asset('storage/' . $model->gambar) }}" alt="Preview" />
+            @if (isset($model) && $model->gambar)
+                <div class="mt-4">
+                    <p class="text-sm mb-2 font-bold">Gambar Saat Ini:</p>
+                    <div class="avatar">
+                        <div class="w-24 rounded">
+                            <img src="{{ asset('storage/' . $model->gambar) }}" alt="Preview" />
+                        </div>
                     </div>
                 </div>
-            </div>
             @endif
             <span class="text-error text-sm mt-1 hidden"></span>
         </div>
@@ -59,22 +59,10 @@ $action = $model->id ? route('barangs.update', $model->id) : route('barangs.stor
     </form>
 </div>
 <script id="data-json" type="application/json">
-    {
-        !!$model - > toJson(JSON_FORCE_OBJECT) !!
-    }
+    {!! $model->toJson(JSON_FORCE_OBJECT) !!}
 </script>
 
 <script type="module">
     jsonScriptToFormFields('#form-elem', '#data-json');
-    $('#form-elem').formAjaxSubmit({
-        processData: false,
-        contentType: false,
-        success: function(response) {
-            alert('Berhasil!');
-            // Optionally reload or redirect
-        },
-        error: function(xhr) {
-            alert('Gagal menyimpan data!');
-        }
-    });
+    $('#form-elem').formAjaxSubmit();
 </script>

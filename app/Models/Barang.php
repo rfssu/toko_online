@@ -2,22 +2,17 @@
 
 namespace App\Models;
 
+use App\Traits\Validatable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Barang extends Model
 {
-    use HasFactory;
+    use HasFactory, Validatable;
 
-    // 1. Definisikan Nama Tabel (Jika beda dengan nama model)
-    // Contoh: Jika di database namanya 'tb_produk', tulis di bawah.
-    protected $table = 'barangs'; 
+    protected $table = 'barangs';
 
-    // 2. Definisikan Primary Key (Jika bukan 'id')
     protected $primaryKey = 'id';
-
-    // 3. Kolom mana saja yang boleh diisi/diedit
-    // Masukkan nama-nama kolom sesuai database Anda
     protected $fillable = [
         'nama_barang',
         'harga',
@@ -25,4 +20,28 @@ class Barang extends Model
         'gambar',
         'keterangan',
     ];
+
+    public function rules($scenario = null)
+    {
+        $scenarios = [
+            null => [
+                'nama_barang' => 'required',
+                'harga' => 'required',
+                'stok' => 'required',
+            ]
+        ];
+
+        $rules = $scenarios[$scenario] ?? $scenarios[null];
+        return $rules;
+    }
+
+    public function labels()
+    {
+        return [
+            'nama_barang' => 'Nama Barang',
+            'harga' => 'Harga',
+            'stok' => 'Stok',
+            'keterangan' => 'Keterangan'
+        ];
+    }
 }

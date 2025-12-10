@@ -289,6 +289,18 @@ globalThis.modalFormAjax = (element, event) => {
             .then((response) => response.text())
             .then((html) => {
                 modalContent.innerHTML = html;
+
+                $(modalContent).trigger("contentLoaded");
+
+                const scripts = modalContent.querySelectorAll("script");
+                scripts.forEach((script) => {
+                    if (script.type === "module" || !script.type) {
+                        const newScript = document.createElement("script");
+                        newScript.textContent = script.textContent;
+                        if (script.type) newScript.type = script.type;
+                        script.parentNode.replaceChild(newScript, script);
+                    }
+                });
             })
             .catch((error) => {
                 modalContent.innerHTML = `<div class="alert alert-error"><span>Error: ${error.message}</span></div>`;
@@ -339,6 +351,13 @@ $.fn.formAjaxSubmit = function (options) {
 
     const viewErrors = function (formElem, errors) {
         let foundFields = [];
+
+        $(formElem).find(".text-error").remove();
+        $(formElem)
+            .find("[name]")
+            .removeClass("input-error")
+            .removeAttr("title");
+
         for (let name in errors) {
             $(formElem)
                 .find(`[name]`)
@@ -359,8 +378,15 @@ $.fn.formAjaxSubmit = function (options) {
                                 .get(0);
                         }
 
+                        if (!errorElem) {
+                            errorElem = document.createElement("span");
+                            errorElem.className =
+                                "text-error text-sm mt-1 block";
+                            $(fieldElem).after(errorElem);
+                        }
+
                         if (errorElem) {
-                            $(errorElem).html(errors[name]);
+                            $(errorElem).html(errors[name]).show();
                         } else {
                             fieldElem.title = errors[name];
                         }
@@ -376,7 +402,17 @@ $.fn.formAjaxSubmit = function (options) {
             voidErrors[field] = errors[field];
         });
         if (notFoundFields.length > 0) {
-            alert(JSON.stringify(voidErrors));
+            console.error(
+                "Validation errors not mapped to fields:",
+                voidErrors
+            );
+            Swal.fire({
+                icon: "error",
+                title: "Validation Error",
+                html: Object.entries(voidErrors)
+                    .map(([key, val]) => `<strong>${key}:</strong> ${val}`)
+                    .join("<br>"),
+            });
         }
     };
 
@@ -394,50 +430,97 @@ $.fn.formAjaxSubmit = function (options) {
                     .removeAttr("title");
             });
 
+        $(formElem).find(".text-error").html("").hide();
+
+        const submitBtn = $(formElem).find('button[type="submit"]');
+        const originalText = submitBtn.html();
+        submitBtn
+            .prop("disabled", true)
+            .html(
+                '<span class="loading loading-spinner loading-sm"></span> Loading...'
+            );
+
         $.ajax({
             url: formElem.action,
             method: formElem.method,
-            dataType: "json",
             data: $(formElem).serialize(),
         })
-            .done(function (_data, _textStatus, _jqXHR) {
+            .done(function (data, textStatus, jqXHR) {
+                console.log("Success:", data);
+
                 if (options.doneCallback) {
                     options.doneCallback({
-                        ...arguments,
+                        data: data,
+                        textStatus: textStatus,
+                        jqXHR: jqXHR,
                         formElem: formElem,
                     });
                 } else {
-                    formElem.submit();
+                    Swal.fire({
+                        icon: "success",
+                        title: "Berhasil!",
+                        text: "Data berhasil disimpan",
+                        timer: 1500,
+                        showConfirmButton: false,
+                    }).then(() => {
+                        $("#close-modal").prop("checked", false);
+                        window.location.reload();
+                    });
                 }
-                dump("done");
             })
-            .fail((jqXHR, _textStatus, _errorThrown) => {
-                if (jqXHR.status === 200) {
-                    if (options.doneCallback) {
-                        options.doneCallback({
-                            ...arguments,
-                            formElem: formElem,
+            .fail((jqXHR, textStatus, errorThrown) => {
+                console.log("AJAX Fail:", {
+                    status: jqXHR.status,
+                    responseText: jqXHR.responseText,
+                    textStatus: textStatus,
+                    errorThrown: errorThrown,
+                });
+
+                if (jqXHR.status === 422) {
+                    let errors = {};
+
+                    try {
+                        const response =
+                            typeof jqXHR.responseJSON === "object"
+                                ? jqXHR.responseJSON
+                                : JSON.parse(jqXHR.responseText);
+
+                        errors = response.errors || {};
+
+                        console.log("Validation errors:", errors);
+
+                        if (options.failCallback) {
+                            options.failCallback({
+                                jqXHR: jqXHR,
+                                textStatus: textStatus,
+                                errorThrown: errorThrown,
+                                formElem: formElem,
+                                errors: errors,
+                            });
+                        } else {
+                            viewErrors(formElem, errors);
+                        }
+                    } catch (e) {
+                        console.error("Failed to parse error response:", e);
+                        Swal.fire({
+                            icon: "error",
+                            title: "Error",
+                            text: "Terjadi kesalahan validasi. Silakan periksa kembali form Anda.",
                         });
-                    } else {
-                        formElem.submit();
                     }
-                }
-                if (
-                    jqXHR.status === 422 &&
-                    jqXHR.responseJSON &&
-                    jqXHR.responseJSON.errors
-                ) {
-                    if (options.failCallback) {
-                        options.failCallback({
-                            ...arguments,
-                            formElem: formElem,
-                        });
-                    } else {
-                        viewErrors(formElem, jqXHR.responseJSON.errors);
-                    }
+                } else {
+                    Swal.fire({
+                        icon: "error",
+                        title: "Error",
+                        text: `Error ${jqXHR.status}: ${
+                            errorThrown || "Terjadi kesalahan"
+                        }`,
+                    });
                 }
             })
             .always(() => {
+                submitBtn.prop("disabled", false).html(originalText);
+
                 $(formElem)
                     .find(`[name]:not(.input-error)`)
                     .each(function () {
@@ -446,6 +529,8 @@ $.fn.formAjaxSubmit = function (options) {
                     });
             });
     });
+
+    return this;
 };
 
 $.fn.pjaxCreate = function (options) {
