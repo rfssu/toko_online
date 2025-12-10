@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\AutoFill;
+use App\Helpers\QuerySearch;
 use App\Models\User;
 use App\Traits\CrudTrait;
 use Illuminate\Http\Request;
@@ -16,9 +17,15 @@ class UserController extends Controller
     {
         $this->user = Auth::user();
     }
-    public function index()
+    public function index(Request $request)
     {
-        $models = User::all();
+        $models = QuerySearch::apply(
+            query: User::query(),
+            request: $request,
+            searchableColumns: ['name', 'email', 'no_hp'],
+            filterableColumns: ['role', 'status'],
+            perPage: 10
+        );
 
         return view('seller/pages/users/index', get_defined_vars());
     }
@@ -27,7 +34,7 @@ class UserController extends Controller
     {
         $model = $id ? $this->findModel(['id' => $id]) : new User;
         $user = $this->user;
-        
+
         return view('seller/pages/users/form', data: get_defined_vars());
     }
 

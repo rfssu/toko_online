@@ -28,6 +28,6 @@ class DatabaseSeeder extends Seeder
             'role' => 'seller',
             'status' => 'on',
         ]);
-        \App\Models\User::factory(10)->create();
+        \App\Models\User::factory(1000)->create();
     }
 }
