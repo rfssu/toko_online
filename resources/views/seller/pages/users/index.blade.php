@@ -103,7 +103,7 @@
             </div>
 
             <!-- Pagination -->
-            <div class="mt-4">
+            <div class="mt-10">
                 {{ $models->links('seller/components/paginate') }}
             </div>
         </div>

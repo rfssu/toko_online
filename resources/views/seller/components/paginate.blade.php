@@ -17,32 +17,30 @@
 
                 {{-- First Page --}}
                 @if ($paginator->onFirstPage())
-                    <button class="join-item btn btn-sm sm:btn-sm btn-disabled" disabled>&laquo;&laquo;</button>
+                    <button class="join-item btn btn-sm btn-disabled" disabled>&laquo;&laquo;</button>
                 @else
-                    <a href="{{ $paginator->url(1) }}" class="join-item btn btn-sm sm:btn-sm">&laquo;&laquo;</a>
+                    <a href="{{ $paginator->url(1) }}" class="join-item btn btn-sm">&laquo;&laquo;</a>
                 @endif
 
                 {{-- Previous --}}
                 @if ($paginator->onFirstPage())
-                    <button class="join-item btn btn-sm sm:btn-sm btn-disabled" disabled>&lsaquo;</button>
+                    <button class="join-item btn btn-sm btn-disabled" disabled>&lsaquo;</button>
                 @else
-                    <a href="{{ $paginator->previousPageUrl() }}" class="join-item btn btn-sm sm:btn-sm">&lsaquo;</a>
+                    <a href="{{ $paginator->previousPageUrl() }}" class="join-item btn btn-sm">&lsaquo;</a>
                 @endif
 
                 {{-- Page Numbers --}}
                 @foreach ($elements as $element)
                     @if (is_string($element))
-                        <button class="join-item btn btn-sm sm:btn-sm btn-disabled">{{ $element }}</button>
+                        <button class="join-item btn btn-sm btn-disabled">{{ $element }}</button>
                     @endif
 
                     @if (is_array($element))
                         @foreach ($element as $page => $url)
                             @if ($page == $paginator->currentPage())
-                                <button
-                                    class="join-item btn btn-sm sm:btn-sm btn-active btn-primary">{{ $page }}</button>
+                                <button class="join-item btn btn-sm btn-active btn-primary">{{ $page }}</button>
                             @else
-                                <a href="{{ $url }}"
-                                    class="join-item btn btn-sm sm:btn-sm">{{ $page }}</a>
+                                <a href="{{ $url }}" class="join-item btn btn-sm">{{ $page }}</a>
                             @endif
                         @endforeach
                     @endif
@@ -50,17 +48,17 @@
 
                 {{-- Next --}}
                 @if ($paginator->hasMorePages())
-                    <a href="{{ $paginator->nextPageUrl() }}" class="join-item btn btn-sm sm:btn-sm">&rsaquo;</a>
+                    <a href="{{ $paginator->nextPageUrl() }}" class="join-item btn btn-sm">&rsaquo;</a>
                 @else
-                    <button class="join-item btn btn-sm sm:btn-sm btn-disabled">&rsaquo;</button>
+                    <button class="join-item btn btn-sm btn-disabled">&rsaquo;</button>
                 @endif
 
                 {{-- Last Page --}}
                 @if ($paginator->currentPage() == $paginator->lastPage())
-                    <button class="join-item btn btn-sm sm:btn-sm btn-disabled">&raquo;&raquo;</button>
+                    <button class="join-item btn btn-sm btn-disabled">&raquo;&raquo;</button>
                 @else
                     <a href="{{ $paginator->url($paginator->lastPage()) }}"
-                        class="join-item btn btn-sm sm:btn-sm">&raquo;&raquo;</a>
+                        class="join-item btn btn-sm">&raquo;&raquo;</a>
                 @endif
 
             </div>
