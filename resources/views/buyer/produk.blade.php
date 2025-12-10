@@ -51,35 +51,13 @@
                     </form>
                 </div>
 
-                {{-- Filter Buttons --}}
-                <div class="flex gap-2 overflow-x-auto hide-scroll w-full md:w-auto">
-                    <button
-                        class="btn btn-sm bg-amber-600 hover:bg-amber-700 text-white border-none rounded-full flex-shrink-0">
-                        <i class="fa-solid fa-fire"></i> Semua
-                    </button>
-                    <button
-                        class="btn btn-sm bg-white hover:bg-gray-50 text-gray-700 border-gray-300 rounded-full flex-shrink-0">
-                        🍪 Kue Basah
-                    </button>
-                    <button
-                        class="btn btn-sm bg-white hover:bg-gray-50 text-gray-700 border-gray-300 rounded-full flex-shrink-0">
-                        🍘 Keripik
-                    </button>
-                    <button
-                        class="btn btn-sm bg-white hover:bg-gray-50 text-gray-700 border-gray-300 rounded-full flex-shrink-0">
-                        🎁 Hampers
-                    </button>
-                    <button
-                        class="btn btn-sm bg-white hover:bg-gray-50 text-gray-700 border-gray-300 rounded-full flex-shrink-0">
-                        🍬 Manisan
-                    </button>
-                </div>
 
-                {{-- Sort Dropdown --}}
+
+                {{-- Filter Dropdown --}}
                 <div class="dropdown dropdown-end">
                     <label tabindex="0"
                         class="btn btn-sm bg-white hover:bg-gray-50 text-gray-700 border-gray-300 rounded-full">
-                        <i class="fa-solid fa-sort"></i> Urutkan
+                        <i class="fa-solid fa-filter"></i> Filter
                         <i class="fa-solid fa-chevron-down text-xs"></i>
                     </label>
                     <ul tabindex="0"
@@ -144,13 +122,7 @@
                             alt="{{ $item->nama_barang }}"
                             class="w-full h-full object-cover group-hover:scale-110 transition duration-500">
 
-                        {{-- Badge Promo --}}
-                        @if($item->id % 2 != 0)
-                            <span
-                                class="absolute top-2 right-2 bg-red-500 text-white text-[10px] font-bold px-2 py-1 rounded shadow-lg animate-pulse">
-                                PROMO
-                            </span>
-                        @endif
+
 
                         {{-- Quick Action Buttons --}}
                         <div
@@ -166,13 +138,6 @@
                         </div>
                     </div>
 
-                    {{-- Badge Info --}}
-                    <div class="mb-2">
-                        <span
-                            class="text-[10px] md:text-xs text-green-600 font-bold bg-green-50 px-2 py-0.5 rounded border border-green-100">
-                            <i class="fa-solid fa-check-circle"></i> {{ $item->keterangan ?? 'Tahan 7 Hari' }}
-                        </span>
-                    </div>
 
                     {{-- Nama Produk --}}
                     <h3 class="font-bold text-gray-800 text-sm md:text-base mb-1 line-clamp-2 min-h-[2.5rem]"
@@ -180,27 +145,22 @@
                         {{ $item->nama_barang }}
                     </h3>
 
-                    {{-- Rating (Simulasi) --}}
-                    <div class="flex items-center gap-1 mb-2">
-                        <div class="flex text-amber-400 text-xs">
-                            <i class="fa-solid fa-star"></i>
-                            <i class="fa-solid fa-star"></i>
-                            <i class="fa-solid fa-star"></i>
-                            <i class="fa-solid fa-star"></i>
-                            <i class="fa-solid fa-star-half-stroke"></i>
+                    {{-- Keterangan Produk --}}
+                    @if($item->keterangan)
+                        <div class="mb-2">
+                            <span
+                                class="text-[10px] md:text-xs text-gray-600 font-medium bg-gray-50 px-2 py-0.5 rounded border border-gray-200">
+                                {{ $item->keterangan }}
+                            </span>
                         </div>
-                        <span class="text-xs text-gray-500">(4.5)</span>
-                    </div>
+                    @endif
+
+
 
                     {{-- Harga & Button --}}
                     <div class="flex justify-between items-end mt-3 pt-3 border-t border-gray-100">
                         <div>
-                            {{-- Harga Coret --}}
-                            @if($item->id % 2 != 0)
-                                <p class="text-xs text-gray-400 line-through">Rp
-                                    {{ number_format($item->harga * 1.2, 0, ',', '.') }}
-                                </p>
-                            @endif
+
                             <p class="text-amber-600 font-bold text-base md:text-lg">
                                 Rp {{ number_format($item->harga, 0, ',', '.') }}
                             </p>
