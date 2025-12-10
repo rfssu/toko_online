@@ -29,7 +29,7 @@ class BarangController extends Controller
     {
         $model = $id ? $this->findModel(['id' => $id]) : new Barang;
         $user = $this->user;
-        
+
         return view('seller/pages/barangs/form', data: get_defined_vars());
     }
 
@@ -38,7 +38,7 @@ class BarangController extends Controller
         $model = $id ? $this->findModel(['id' => $id]) : new Barang;
         $params = $request->all();
         $model->validator($params, $model->rules(), [], $model->labels())->validate();
-        if ($request->ajax() && $request->wantsJson()) {
+        if ($request->ajax()) {
             return;
         }
         AutoFill::fill($model, params: $params);

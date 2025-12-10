@@ -351,13 +351,6 @@ $.fn.formAjaxSubmit = function (options) {
 
     const viewErrors = function (formElem, errors) {
         let foundFields = [];
-
-        $(formElem).find(".text-error").remove();
-        $(formElem)
-            .find("[name]")
-            .removeClass("input-error")
-            .removeAttr("title");
-
         for (let name in errors) {
             $(formElem)
                 .find(`[name]`)
@@ -377,7 +370,6 @@ $.fn.formAjaxSubmit = function (options) {
                                 .siblings(".error-message")
                                 .get(0);
                         }
-
                         if (!errorElem) {
                             errorElem = document.createElement("span");
                             errorElem.className =
@@ -402,17 +394,7 @@ $.fn.formAjaxSubmit = function (options) {
             voidErrors[field] = errors[field];
         });
         if (notFoundFields.length > 0) {
-            console.error(
-                "Validation errors not mapped to fields:",
-                voidErrors
-            );
-            Swal.fire({
-                icon: "error",
-                title: "Validation Error",
-                html: Object.entries(voidErrors)
-                    .map(([key, val]) => `<strong>${key}:</strong> ${val}`)
-                    .join("<br>"),
-            });
+            alert(JSON.stringify(voidErrors));
         }
     };
 
@@ -429,7 +411,6 @@ $.fn.formAjaxSubmit = function (options) {
                     .removeClass("input-error")
                     .removeAttr("title");
             });
-
         $(formElem).find(".text-error").html("").hide();
 
         const submitBtn = $(formElem).find('button[type="submit"]');
@@ -443,84 +424,48 @@ $.fn.formAjaxSubmit = function (options) {
         $.ajax({
             url: formElem.action,
             method: formElem.method,
+            dataType: "json",
             data: $(formElem).serialize(),
         })
-            .done(function (data, textStatus, jqXHR) {
-                console.log("Success:", data);
-
+            .done(function (_data, _textStatus, _jqXHR) {
                 if (options.doneCallback) {
                     options.doneCallback({
-                        data: data,
-                        textStatus: textStatus,
-                        jqXHR: jqXHR,
+                        ...arguments,
                         formElem: formElem,
                     });
                 } else {
-                    Swal.fire({
-                        icon: "success",
-                        title: "Berhasil!",
-                        text: "Data berhasil disimpan",
-                        timer: 1500,
-                        showConfirmButton: false,
-                    }).then(() => {
-                        $("#close-modal").prop("checked", false);
-                        window.location.reload();
-                    });
+                    formElem.submit();
                 }
+                dump("done");
             })
-            .fail((jqXHR, textStatus, errorThrown) => {
-                console.log("AJAX Fail:", {
-                    status: jqXHR.status,
-                    responseText: jqXHR.responseText,
-                    textStatus: textStatus,
-                    errorThrown: errorThrown,
-                });
-
-                if (jqXHR.status === 422) {
-                    let errors = {};
-
-                    try {
-                        const response =
-                            typeof jqXHR.responseJSON === "object"
-                                ? jqXHR.responseJSON
-                                : JSON.parse(jqXHR.responseText);
-
-                        errors = response.errors || {};
-
-                        console.log("Validation errors:", errors);
-
-                        if (options.failCallback) {
-                            options.failCallback({
-                                jqXHR: jqXHR,
-                                textStatus: textStatus,
-                                errorThrown: errorThrown,
-                                formElem: formElem,
-                                errors: errors,
-                            });
-                        } else {
-                            viewErrors(formElem, errors);
-                        }
-                    } catch (e) {
-                        console.error("Failed to parse error response:", e);
-                        Swal.fire({
-                            icon: "error",
-                            title: "Error",
-                            text: "Terjadi kesalahan validasi. Silakan periksa kembali form Anda.",
+            .fail((jqXHR, _textStatus, _errorThrown) => {
+                if (jqXHR.status === 200) {
+                    if (options.doneCallback) {
+                        options.doneCallback({
+                            ...arguments,
+                            formElem: formElem,
                         });
+                    } else {
+                        formElem.submit();
                     }
-                } else {
-                    Swal.fire({
-                        icon: "error",
-                        title: "Error",
-                        text: `Error ${jqXHR.status}: ${
-                            errorThrown || "Terjadi kesalahan"
-                        }`,
-                    });
+                }
+                if (
+                    jqXHR.status === 422 &&
+                    jqXHR.responseJSON &&
+                    jqXHR.responseJSON.errors
+                ) {
+                    if (options.failCallback) {
+                        options.failCallback({
+                            ...arguments,
+                            formElem: formElem,
+                        });
+                    } else {
+                        viewErrors(formElem, jqXHR.responseJSON.errors);
+                    }
                 }
             })
             .always(() => {
                 submitBtn.prop("disabled", false).html(originalText);
-
                 $(formElem)
                     .find(`[name]:not(.input-error)`)
                     .each(function () {
@@ -529,8 +474,6 @@ $.fn.formAjaxSubmit = function (options) {
                     });
             });
     });
-
-    return this;
 };
 
 $.fn.pjaxCreate = function (options) {
