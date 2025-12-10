@@ -1,5 +1,4 @@
 @php
-    // Tentukan mau lari ke Route Store (Baru) atau Update (Edit)
     $action = $model->id ? route('barangs.update', $model->id) : route('barangs.store');
 @endphp
 
@@ -15,7 +14,6 @@
 
         <div class="form-control">
             <input type="text" name="nama_barang" placeholder="Nama Barang" class="input input-bordered w-full" />
-            <span class="text-error text-sm mt-1 hidden"></span>
         </div>
 
         <div class="form-control">
@@ -35,22 +33,18 @@
                     </div>
                 </div>
             @endif
-            <span class="text-error text-sm mt-1 hidden"></span>
         </div>
 
         <div class="form-control">
             <input type="number" name="harga" placeholder="Harga" class="input input-bordered w-full" />
-            <span class="text-error text-sm mt-1 hidden"></span>
         </div>
 
         <div class="form-control">
             <input type="number" name="stok" placeholder="Stok" class="input input-bordered w-full" />
-            <span class="text-error text-sm mt-1 hidden"></span>
         </div>
 
         <div class="form-control">
             <textarea name="keterangan" placeholder="Keterangan" class="textarea textarea-bordered w-full"></textarea>
-            <span class="text-error text-sm mt-1 hidden"></span>
         </div>
 
         <button type="submit" class="btn btn-primary w-full">
