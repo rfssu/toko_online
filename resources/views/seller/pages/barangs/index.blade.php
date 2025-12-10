@@ -56,10 +56,10 @@ $deleteRoute = fn($model) => route('barangs.destroy', $model->id);
                         </td>
                         <td>{{ $model->nama_barang }}</td>
                         <td>
-                            @if($model->gambar)
+                            @if($model->file('gambar')->hasFile())
                             <div class="avatar">
                                 <div class="w-16 h-16 rounded mb-2">
-                                    <img src="{{ asset('storage/' . $model->gambar) }}" alt="{{ $model->nama_barang }}" />
+                                    <img src="{{ $model->file('gambar')->preview() }}" alt="{{ $model->nama_barang }}" />
                                 </div>
                             </div>
                             @else
