@@ -1,29 +1,33 @@
 <div class="sticky top-0 z-50 w-full">
     <div class="navbar bg-base-100/95 backdrop-blur border-b border-gray-100 shadow-sm px-4 md:px-8 h-20">
-        
+
         {{-- BAGIAN KIRI: Toggle Mobile & Logo --}}
         <div class="navbar-start w-auto lg:w-1/2">
             <div class="dropdown">
                 <div tabindex="0" role="button" class="btn btn-ghost lg:hidden">
                     <i class="fa-solid fa-bars text-xl"></i>
                 </div>
-                <ul tabindex="0" class="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52">
+                <ul tabindex="0"
+                    class="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52">
                     <li><a href="{{ url('/') }}">Beranda</a></li>
                     <li><a href="{{ url('/produk') }}">Produk</a></li>
                     <li><a href="{{ url('/tentang-kami') }}">Tentang Kami</a></li>
                 </ul>
             </div>
-            
+
             {{-- Logo Toko --}}
-            <a href="{{ url('/') }}" class="btn btn-ghost text-xl md:text-2xl font-bold tracking-tight text-amber-600 hover:bg-transparent px-2">
+            <a href="{{ url('/') }}"
+                class="btn btn-ghost text-xl md:text-2xl font-bold tracking-tight text-amber-600 hover:bg-transparent px-2">
                 <i class="fa-solid fa-store mr-1"></i> Khas<span class="text-gray-800">Jogja.</span>
             </a>
-            
+
             {{-- Menu Desktop (Sebelah Logo) --}}
             <ul class="menu menu-horizontal px-1 hidden lg:flex font-medium text-gray-600 gap-2 ml-4">
                 <li><a href="{{ url('/') }}" class="hover:text-amber-600 hover:bg-amber-50 rounded-lg">Beranda</a></li>
-                <li><a href="{{ url('/produk') }}" class="hover:text-amber-600 hover:bg-amber-50 rounded-lg">Produk</a></li>
-                <li><a href="{{ url('/tentang-kami') }}" class="hover:text-amber-600 hover:bg-amber-50 rounded-lg">Tentang Kami</a></li>
+                <li><a href="{{ url('/produk') }}" class="hover:text-amber-600 hover:bg-amber-50 rounded-lg">Produk</a>
+                </li>
+                <li><a href="{{ url('/tentang-kami') }}"
+                        class="hover:text-amber-600 hover:bg-amber-50 rounded-lg">Tentang Kami</a></li>
             </ul>
         </div>
 
@@ -32,17 +36,22 @@
 
         {{-- BAGIAN KANAN: Search, Cart, Profile --}}
         <div class="navbar-end flex-1 gap-2 md:gap-4">
-            
+
             {{-- Search Bar (Desktop) --}}
-            <div class="form-control hidden md:block w-full max-w-xs">
+            <form action="{{ route('produk') }}" method="GET" class="form-control hidden md:block w-full max-w-xs">
                 <div class="relative">
-                    <input type="text" placeholder="Cari bakpia, keripik..." class="input input-bordered input-sm w-full rounded-full bg-gray-100 focus:outline-none focus:border-amber-500 pr-10" />
-                    <i class="fa-solid fa-magnifying-glass absolute right-3 top-2.5 text-gray-400 text-xs"></i>
+                    <input type="text" name="search" placeholder="Cari bakpia, keripik..."
+                        value="{{ request('search') }}"
+                        class="input input-bordered input-sm w-full rounded-full bg-gray-100 focus:outline-none focus:border-amber-500 pr-10" />
+                    <button type="submit" class="absolute right-0 top-0 h-full px-3 hover:text-amber-600 transition">
+                        <i class="fa-solid fa-magnifying-glass text-gray-400 text-xs"></i>
+                    </button>
                 </div>
-            </div>
-            
-            {{-- Search Icon (Mobile Only) --}}
-            <button class="btn btn-ghost btn-circle btn-sm md:hidden">
+            </form>
+
+            {{-- Search Icon (Mobile Only) - Opens Modal --}}
+            <button onclick="document.getElementById('mobile_search_modal').showModal()"
+                class="btn btn-ghost btn-circle btn-sm md:hidden">
                 <i class="fa-solid fa-magnifying-glass"></i>
             </button>
 
@@ -55,12 +64,15 @@
                     </div>
                 </div>
                 {{-- Cart Preview Dropdown --}}
-                <div tabindex="0" class="mt-3 z-[1] card card-compact dropdown-content w-52 bg-base-100 shadow-xl border border-gray-100">
+                <div tabindex="0"
+                    class="mt-3 z-[1] card card-compact dropdown-content w-52 bg-base-100 shadow-xl border border-gray-100">
                     <div class="card-body">
                         <span class="font-bold text-lg">0 Barang</span>
                         <span class="text-info text-amber-600">Subtotal: Rp 0</span>
                         <div class="card-actions">
-                            <button class="btn bg-amber-600 hover:bg-amber-700 text-white btn-block btn-sm border-none">Lihat Keranjang</button>
+                            <button
+                                class="btn bg-amber-600 hover:bg-amber-700 text-white btn-block btn-sm border-none">Lihat
+                                Keranjang</button>
                         </div>
                     </div>
                 </div>
@@ -68,13 +80,15 @@
 
             {{-- Profile Icon --}}
             <div class="dropdown dropdown-end">
-                <div tabindex="0" role="button" class="btn btn-ghost btn-circle avatar border border-gray-200 hover:border-amber-500 transition">
+                <div tabindex="0" role="button"
+                    class="btn btn-ghost btn-circle avatar border border-gray-200 hover:border-amber-500 transition">
                     <div class="w-9 rounded-full">
                         {{-- Placeholder Avatar --}}
                         <img alt="User" src="https://ui-avatars.com/api/?name=User&background=random" />
                     </div>
                 </div>
-                <ul tabindex="0" class="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52 border border-gray-100">
+                <ul tabindex="0"
+                    class="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52 border border-gray-100">
                     <li>
                         <a href="{{ route('profile') }}" class="justify-between">
                             Profile
@@ -88,3 +102,27 @@
         </div>
     </div>
 </div>
+
+{{-- Mobile Search Modal --}}
+<dialog id="mobile_search_modal" class="modal">
+    <div class="modal-box">
+        <h3 class="font-bold text-lg mb-4">Cari Produk</h3>
+        <form action="{{ route('produk') }}" method="GET">
+            <div class="relative">
+                <input type="text" name="search" placeholder="Cari bakpia, keripik..." autofocus
+                    class="input input-bordered w-full rounded-full pl-12 pr-4 focus:outline-none focus:ring-2 focus:ring-amber-500" />
+                <i class="fa-solid fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+            </div>
+            <div class="modal-action">
+                <button type="button" onclick="document.getElementById('mobile_search_modal').close()"
+                    class="btn btn-ghost">Batal</button>
+                <button type="submit" class="btn bg-amber-600 hover:bg-amber-700 text-white border-none">
+                    <i class="fa-solid fa-search"></i> Cari
+                </button>
+            </div>
+        </form>
+    </div>
+    <form method="dialog" class="modal-backdrop">
+        <button>close</button>
+    </form>
+</dialog>

@@ -39,11 +39,16 @@
 
                 {{-- Search Bar --}}
                 <div class="w-full md:w-1/2 lg:w-1/3">
-                    <div class="relative">
-                        <input type="text" placeholder="Cari produk favorit..."
-                            class="input input-bordered w-full rounded-full pl-12 pr-4 focus:outline-none focus:ring-2 focus:ring-amber-500 border-gray-300">
-                        <i class="fa-solid fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
-                    </div>
+                    <form action="{{ route('produk') }}" method="GET">
+                        <div class="relative">
+                            <input type="text" name="search" value="{{ $search ?? '' }}"
+                                placeholder="Cari produk favorit..."
+                                class="input input-bordered w-full rounded-full pl-12 pr-4 focus:outline-none focus:ring-2 focus:ring-amber-500 border-gray-300">
+                            <button type="submit" class="absolute left-0 top-0 h-full px-4 hover:text-amber-600 transition">
+                                <i class="fa-solid fa-search text-gray-400"></i>
+                            </button>
+                        </div>
+                    </form>
                 </div>
 
                 {{-- Filter Buttons --}}
@@ -100,9 +105,21 @@
 
         {{-- Info Jumlah Produk --}}
         <div class="flex justify-between items-center mb-6">
-            <p class="text-gray-600 text-sm md:text-base">
-                Menampilkan <span class="font-bold text-gray-900">{{ $data_barang->count() }}</span> produk
-            </p>
+            <div>
+                <p class="text-gray-600 text-sm md:text-base">
+                    Menampilkan <span class="font-bold text-gray-900">{{ $data_barang->count() }}</span> produk
+                </p>
+                @if($search)
+                    <div class="flex items-center gap-2 mt-2">
+                        <p class="text-sm text-gray-500">
+                            Hasil pencarian untuk: <span class="font-semibold text-amber-600">"{{ $search }}"</span>
+                        </p>
+                        <a href="{{ route('produk') }}" class="text-xs text-gray-500 hover:text-amber-600 underline">
+                            Hapus filter
+                        </a>
+                    </div>
+                @endif
+            </div>
             <div class="flex gap-2">
                 <button class="btn btn-sm btn-square bg-amber-600 text-white border-none hover:bg-amber-700">
                     <i class="fa-solid fa-grip"></i>
