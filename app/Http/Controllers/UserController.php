@@ -44,7 +44,7 @@ class UserController extends Controller
         $params = $request->all();
         $params['password'] ??= $model->password;
         $model->validator($params, $model->rules(), [], $model->labels())->validate();
-        if ($request->ajax() && $request->wantsJson()) {
+        if ($request->ajax()) {
             return;
         }
         AutoFill::fill($model, params: $params);
