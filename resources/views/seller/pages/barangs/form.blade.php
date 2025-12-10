@@ -20,15 +20,14 @@
 
             <fieldset class="fieldset">
                 <legend class="fieldset-legend">Pilih Gambar</legend>
-                <input type="file" name="gambar" class="file-input file-input-bordered w-full" />
+                <input type="file" name="upload_gambar" class="file-input file-input-bordered w-full" />
             </fieldset>
-
-            @if (isset($model) && $model->gambar)
+            @if ($model->file('gambar')->hasFile())
                 <div class="mt-4">
                     <p class="text-sm mb-2 font-bold">Gambar Saat Ini:</p>
                     <div class="avatar">
                         <div class="w-24 rounded">
-                            <img src="{{ asset('storage/' . $model->gambar) }}" alt="Preview" />
+                            <img src="{{ $model->file('gambar')->preview() }}" alt="Preview" />
                         </div>
                     </div>
                 </div>

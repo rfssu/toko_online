@@ -2,13 +2,14 @@
 
 namespace App\Models;
 
+use App\Traits\Fileable;
 use App\Traits\Validatable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Barang extends Model
 {
-    use HasFactory, Validatable;
+    use HasFactory, Validatable, Fileable;
 
     protected $table = 'barangs';
 
