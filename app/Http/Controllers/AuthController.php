@@ -5,19 +5,21 @@ use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller
 {
-    public function showLoginForm() {
+    public function showLoginForm()
+    {
         // Mengarah ke file view login Anda
         // Karena Anda bilang punya folder auth di views, pakai itu:
-        return view('auth.login'); 
+        return view('auth.login');
     }
 
-    public function login(Request $request) {
-        $credentials = $request->validate(['email'=>'required','password'=>'required']);
-        if(Auth::attempt($credentials)) {
+    public function login(Request $request)
+    {
+        $credentials = $request->validate(['email' => 'required', 'password' => 'required']);
+        if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
             return redirect()->intended('dashboard');
         }
-        return back()->withErrors(['email'=>'Salah email atau password']);
+        return back()->withErrors(['email' => 'Salah email atau password']);
     }
 
     // ... method login yang sudah ada ...
@@ -60,8 +62,8 @@ class AuthController extends Controller
         Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
-        
+
         // Setelah logout, lempar user kembali ke halaman login
-        return redirect()->route('login');
+        return redirect('/');
     }
 }

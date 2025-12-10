@@ -23,6 +23,9 @@ use App\Http\Controllers\AuthController;
 
 // Public Routes
 Route::get('/', [HomeController::class, 'index'])->name('home');
+Route::get('/produk', [HomeController::class, 'produk'])->name('produk');
+Route::get('/tentang-kami', [HomeController::class, 'tentang'])->name('tentang');
+
 
 
 // Authenticated Routes
@@ -47,6 +50,10 @@ Route::middleware(['auth'])->group(function () {
 
     // --- TAMBAHKAN BARIS INI (OBAT ERROR LOGOUT) ---
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+
+    Route::get('/profile', [HomeController::class, 'profile'])->name('profile');
+    Route::post('/profile/update', [HomeController::class, 'updateProfile'])->name('profile.update');
+    Route::post('/profile/password', [HomeController::class, 'updatePassword'])->name('profile.password');
     
     Route::get('dashboard', function () {
         return view('seller/pages/dashboard');

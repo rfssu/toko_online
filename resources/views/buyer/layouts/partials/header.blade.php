@@ -9,8 +9,8 @@
                 </div>
                 <ul tabindex="0" class="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52">
                     <li><a href="{{ url('/') }}">Beranda</a></li>
-                    <li><a>Produk</a></li>
-                    <li><a>Tentang Kami</a></li>
+                    <li><a href="{{ url('/produk') }}">Produk</a></li>
+                    <li><a href="{{ url('/tentang-kami') }}">Tentang Kami</a></li>
                 </ul>
             </div>
             
@@ -22,8 +22,8 @@
             {{-- Menu Desktop (Sebelah Logo) --}}
             <ul class="menu menu-horizontal px-1 hidden lg:flex font-medium text-gray-600 gap-2 ml-4">
                 <li><a href="{{ url('/') }}" class="hover:text-amber-600 hover:bg-amber-50 rounded-lg">Beranda</a></li>
-                <li><a class="hover:text-amber-600 hover:bg-amber-50 rounded-lg">Produk</a></li>
-                <li><a class="hover:text-amber-600 hover:bg-amber-50 rounded-lg">Tentang Kami</a></li>
+                <li><a href="{{ url('/produk') }}" class="hover:text-amber-600 hover:bg-amber-50 rounded-lg">Produk</a></li>
+                <li><a href="{{ url('/tentang-kami') }}" class="hover:text-amber-600 hover:bg-amber-50 rounded-lg">Tentang Kami</a></li>
             </ul>
         </div>
 
@@ -76,7 +76,7 @@
                 </div>
                 <ul tabindex="0" class="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52 border border-gray-100">
                     <li>
-                        <a class="justify-between">
+                        <a href="{{ route('profile') }}" class="justify-between">
                             Profile
                             <span class="badge badge-ghost text-xs">New</span>
                         </a>
