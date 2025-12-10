@@ -53,22 +53,31 @@
 
 
 
-                {{-- Filter Dropdown --}}
-                <div class="dropdown dropdown-end">
-                    <label tabindex="0"
-                        class="btn btn-sm bg-white hover:bg-gray-50 text-gray-700 border-gray-300 rounded-full">
-                        <i class="fa-solid fa-filter"></i> Filter
-                        <i class="fa-solid fa-chevron-down text-xs"></i>
-                    </label>
-                    <ul tabindex="0"
-                        class="dropdown-content z-[1] menu p-2 shadow-lg bg-white rounded-xl w-52 mt-2 border border-gray-200">
-                        <li><a class="rounded-lg"><i class="fa-solid fa-fire text-amber-600"></i> Terpopuler</a></li>
-                        <li><a class="rounded-lg"><i class="fa-solid fa-arrow-down-1-9 text-green-600"></i> Harga
-                                Terendah</a></li>
-                        <li><a class="rounded-lg"><i class="fa-solid fa-arrow-up-9-1 text-red-600"></i> Harga Tertinggi</a>
-                        </li>
-                        <li><a class="rounded-lg"><i class="fa-solid fa-clock text-blue-600"></i> Terbaru</a></li>
-                    </ul>
+                {{-- Filter Buttons --}}
+                <div class="flex flex-wrap gap-2">
+                    <a href="{{ route('produk', ['filter' => 'popular', 'search' => $search]) }}"
+                        class="btn btn-sm {{ ($filter ?? '') == 'popular' ? 'bg-amber-600 text-white hover:bg-amber-700' : 'bg-white hover:bg-amber-50 text-gray-700' }} border-gray-300 rounded-full">
+                        <i
+                            class="fa-solid fa-fire {{ ($filter ?? '') == 'popular' ? 'text-white' : 'text-amber-600' }}"></i>
+                        Terpopuler
+                    </a>
+                    <a href="{{ route('produk', ['filter' => 'price_low', 'search' => $search]) }}"
+                        class="btn btn-sm {{ ($filter ?? '') == 'price_low' ? 'bg-green-600 text-white hover:bg-green-700' : 'bg-white hover:bg-green-50 text-gray-700' }} border-gray-300 rounded-full">
+                        <i
+                            class="fa-solid fa-arrow-down-1-9 {{ ($filter ?? '') == 'price_low' ? 'text-white' : 'text-green-600' }}"></i>
+                        Harga Terendah
+                    </a>
+                    <a href="{{ route('produk', ['filter' => 'price_high', 'search' => $search]) }}"
+                        class="btn btn-sm {{ ($filter ?? '') == 'price_high' ? 'bg-red-600 text-white hover:bg-red-700' : 'bg-white hover:bg-red-50 text-gray-700' }} border-gray-300 rounded-full">
+                        <i
+                            class="fa-solid fa-arrow-up-9-1 {{ ($filter ?? '') == 'price_high' ? 'text-white' : 'text-red-600' }}"></i>
+                        Harga Tertinggi
+                    </a>
+                    <a href="{{ route('produk', ['filter' => 'newest', 'search' => $search]) }}"
+                        class="btn btn-sm {{ ($filter ?? '') == 'newest' ? 'bg-blue-600 text-white hover:bg-blue-700' : 'bg-white hover:bg-blue-50 text-gray-700' }} border-gray-300 rounded-full">
+                        <i class="fa-solid fa-clock {{ ($filter ?? '') == 'newest' ? 'text-white' : 'text-blue-600' }}"></i>
+                        Terbaru
+                    </a>
                 </div>
             </div>
         </div>
@@ -97,14 +106,6 @@
                         </a>
                     </div>
                 @endif
-            </div>
-            <div class="flex gap-2">
-                <button class="btn btn-sm btn-square bg-amber-600 text-white border-none hover:bg-amber-700">
-                    <i class="fa-solid fa-grip"></i>
-                </button>
-                <button class="btn btn-sm btn-square bg-white text-gray-600 border-gray-300 hover:bg-gray-50">
-                    <i class="fa-solid fa-list"></i>
-                </button>
             </div>
         </div>
 
@@ -188,16 +189,9 @@
         </div>
 
         {{-- Pagination --}}
-        @if($data_barang->count() > 0)
+        @if($data_barang->hasPages())
             <div class="flex justify-center mt-12">
-                <div class="join">
-                    <button class="join-item btn btn-sm">«</button>
-                    <button class="join-item btn btn-sm bg-amber-600 text-white border-amber-600">1</button>
-                    <button class="join-item btn btn-sm">2</button>
-                    <button class="join-item btn btn-sm">3</button>
-                    <button class="join-item btn btn-sm">4</button>
-                    <button class="join-item btn btn-sm">»</button>
-                </div>
+                {{ $data_barang->appends(['search' => $search, 'filter' => $filter])->links('vendor.pagination.custom') }}
             </div>
         @endif
     </div>

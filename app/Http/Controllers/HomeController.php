@@ -11,12 +11,12 @@ class HomeController extends Controller
 {
     public function index()
     {
-        // 1. AMBIL DATA BEST SELLER (simulasi: 8 produk pertama)
+        // 1. AMBIL DATA BEST SELLER (simulasi: 4 produk pertama)
         // TODO: Nanti bisa diganti dengan query berdasarkan jumlah penjualan
-        $bestSellers = Barang::take(8)->get();
+        $bestSellers = Barang::take(4)->get();
 
-        // 2. AMBIL PRODUK BARU (8 produk terbaru)
-        $newProducts = Barang::latest()->take(8)->get();
+        // 2. AMBIL PRODUK BARU (4 produk terbaru)
+        $newProducts = Barang::latest()->take(4)->get();
 
         // 3. RETURN KE VIEW DI DALAM FOLDER BUYER
         return view('buyer.home', [
@@ -27,8 +27,9 @@ class HomeController extends Controller
 
     public function produk(Request $request)
     {
-        // AMBIL QUERY SEARCH DARI REQUEST
+        // AMBIL QUERY SEARCH DAN FILTER DARI REQUEST
         $search = $request->input('search');
+        $filter = $request->input('filter');
 
         // QUERY BARANG DENGAN FILTER SEARCH
         $barangs = Barang::query();
@@ -37,11 +38,34 @@ class HomeController extends Controller
             $barangs->where('nama_barang', 'LIKE', '%' . $search . '%');
         }
 
-        $barangs = $barangs->get();
+        // TERAPKAN FILTER SORTING
+        switch ($filter) {
+            case 'popular':
+                // TODO: Nanti bisa diganti dengan query berdasarkan jumlah penjualan
+                // Untuk saat ini, urutkan berdasarkan ID terkecil (simulasi produk populer)
+                $barangs->orderBy('id', 'asc');
+                break;
+            case 'price_low':
+                $barangs->orderBy('harga', 'asc');
+                break;
+            case 'price_high':
+                $barangs->orderBy('harga', 'desc');
+                break;
+            case 'newest':
+                $barangs->orderBy('created_at', 'desc');
+                break;
+            default:
+                // Default: urutkan berdasarkan terbaru
+                $barangs->orderBy('created_at', 'desc');
+                break;
+        }
+
+        $barangs = $barangs->paginate(8);
 
         return view('buyer.produk', [
             'data_barang' => $barangs,
-            'search' => $search
+            'search' => $search,
+            'filter' => $filter
         ]);
     }
 
