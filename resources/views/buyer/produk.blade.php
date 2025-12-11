@@ -41,7 +41,7 @@
                 <div class="w-full md:w-1/2 lg:w-1/3">
                     <form action="{{ route('produk') }}" method="GET">
                         <div class="relative">
-                            <input type="text" name="search" value="{{ $search ?? '' }}"
+                            <input type="text" name="search" value="{{ request('search') }}"
                                 placeholder="Cari produk favorit..."
                                 class="input input-bordered w-full rounded-full pl-12 pr-4 focus:outline-none focus:ring-2 focus:ring-amber-500 border-gray-300">
                             <button type="submit" class="absolute left-0 top-0 h-full px-4 hover:text-amber-600 transition">
@@ -55,27 +55,27 @@
 
                 {{-- Filter Buttons --}}
                 <div class="flex flex-wrap gap-2">
-                    <a href="{{ route('produk', ['filter' => 'popular', 'search' => $search]) }}"
-                        class="btn btn-sm {{ ($filter ?? '') == 'popular' ? 'bg-amber-600 text-white hover:bg-amber-700' : 'bg-white hover:bg-amber-50 text-gray-700' }} border-gray-300 rounded-full">
+                    <a href="{{ route('produk', ['filter' => 'popular', 'search' => request('search')]) }}"
+                        class="btn btn-sm {{ (request('filter') ?? '') == 'popular' ? 'bg-amber-600 text-white hover:bg-amber-700' : 'bg-white hover:bg-amber-50 text-gray-700' }} border-gray-300 rounded-full">
                         <i
-                            class="fa-solid fa-fire {{ ($filter ?? '') == 'popular' ? 'text-white' : 'text-amber-600' }}"></i>
+                            class="fa-solid fa-fire {{ (request('filter') ?? '') == 'popular' ? 'text-white' : 'text-amber-600' }}"></i>
                         Terpopuler
                     </a>
-                    <a href="{{ route('produk', ['filter' => 'price_low', 'search' => $search]) }}"
-                        class="btn btn-sm {{ ($filter ?? '') == 'price_low' ? 'bg-green-600 text-white hover:bg-green-700' : 'bg-white hover:bg-green-50 text-gray-700' }} border-gray-300 rounded-full">
+                    <a href="{{ route('produk', ['filter' => 'price_low', 'search' => request('search')]) }}"
+                        class="btn btn-sm {{ (request('filter') ?? '') == 'price_low' ? 'bg-green-600 text-white hover:bg-green-700' : 'bg-white hover:bg-green-50 text-gray-700' }} border-gray-300 rounded-full">
                         <i
-                            class="fa-solid fa-arrow-down-1-9 {{ ($filter ?? '') == 'price_low' ? 'text-white' : 'text-green-600' }}"></i>
+                            class="fa-solid fa-arrow-down-1-9 {{ (request('filter') ?? '') == 'price_low' ? 'text-white' : 'text-green-600' }}"></i>
                         Harga Terendah
                     </a>
-                    <a href="{{ route('produk', ['filter' => 'price_high', 'search' => $search]) }}"
-                        class="btn btn-sm {{ ($filter ?? '') == 'price_high' ? 'bg-red-600 text-white hover:bg-red-700' : 'bg-white hover:bg-red-50 text-gray-700' }} border-gray-300 rounded-full">
+                    <a href="{{ route('produk', ['filter' => 'price_high', 'search' => request('search')]) }}"
+                        class="btn btn-sm {{ (request('filter') ?? '') == 'price_high' ? 'bg-red-600 text-white hover:bg-red-700' : 'bg-white hover:bg-red-50 text-gray-700' }} border-gray-300 rounded-full">
                         <i
-                            class="fa-solid fa-arrow-up-9-1 {{ ($filter ?? '') == 'price_high' ? 'text-white' : 'text-red-600' }}"></i>
+                            class="fa-solid fa-arrow-up-9-1 {{ (request('filter') ?? '') == 'price_high' ? 'text-white' : 'text-red-600' }}"></i>
                         Harga Tertinggi
                     </a>
-                    <a href="{{ route('produk', ['filter' => 'newest', 'search' => $search]) }}"
-                        class="btn btn-sm {{ ($filter ?? '') == 'newest' ? 'bg-blue-600 text-white hover:bg-blue-700' : 'bg-white hover:bg-blue-50 text-gray-700' }} border-gray-300 rounded-full">
-                        <i class="fa-solid fa-clock {{ ($filter ?? '') == 'newest' ? 'text-white' : 'text-blue-600' }}"></i>
+                    <a href="{{ route('produk', ['filter' => 'newest', 'search' => request('search')]) }}"
+                        class="btn btn-sm {{ (request('filter') ?? '') == 'newest' ? 'bg-blue-600 text-white hover:bg-blue-700' : 'bg-white hover:bg-blue-50 text-gray-700' }} border-gray-300 rounded-full">
+                        <i class="fa-solid fa-clock {{ (request('filter') ?? '') == 'newest' ? 'text-white' : 'text-blue-600' }}"></i>
                         Terbaru
                     </a>
                 </div>
@@ -94,12 +94,12 @@
         <div class="flex justify-between items-center mb-6">
             <div>
                 <p class="text-gray-600 text-sm md:text-base">
-                    Menampilkan <span class="font-bold text-gray-900">{{ $data_barang->count() }}</span> produk
+                    Menampilkan <span class="font-bold text-gray-900">{{ $models->count() }}</span> produk
                 </p>
-                @if($search)
+                @if(request('search'))
                     <div class="flex items-center gap-2 mt-2">
                         <p class="text-sm text-gray-500">
-                            Hasil pencarian untuk: <span class="font-semibold text-amber-600">"{{ $search }}"</span>
+                            Hasil pencarian untuk: <span class="font-semibold text-amber-600">"{{ request('search') }}"</span>
                         </p>
                         <a href="{{ route('produk') }}" class="text-xs text-gray-500 hover:text-amber-600 underline">
                             Hapus filter
@@ -113,7 +113,7 @@
         <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
 
             {{-- LOOPING DATA BARANG --}}
-            @forelse($data_barang as $item)
+            @forelse($models as $item)
                 <div
                     class="group bg-white border border-gray-100 rounded-xl p-3 md:p-4 shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
 
@@ -189,9 +189,9 @@
         </div>
 
         {{-- Pagination --}}
-        @if($data_barang->hasPages())
+        @if($models->hasPages())
             <div class="flex justify-center mt-12">
-                {{ $data_barang->appends(['search' => $search, 'filter' => $filter])->links('vendor.pagination.custom') }}
+                {{ $models->appends(request()->only(['search', 'filter']))->links('vendor.pagination.custom') }}
             </div>
         @endif
     </div>

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\QuerySearch;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -27,48 +28,37 @@ class HomeController extends Controller
 
     public function produk(Request $request)
     {
-        // AMBIL QUERY SEARCH DAN FILTER DARI REQUEST
-        $search = $request->input('search');
-        $filter = $request->input('filter');
+        $sortBy = match ($request->input('filter')) {
+            'popular'    => 'id',
+            'price_low'  => 'harga',
+            'price_high' => 'harga',
+            'newest'     => 'created_at',
+            default      => 'created_at',
+        };
 
-        // QUERY BARANG DENGAN FILTER SEARCH
-        $barangs = Barang::query();
+        $sortDir = match ($request->input('filter')) {
+            'price_high' => 'desc',
+            'newest'     => 'desc',
+            'popular'    => 'asc',
+            'price_low'  => 'asc',
+            default      => 'desc',
+        };
 
-        if ($search) {
-            $barangs->where('nama_barang', 'LIKE', '%' . $search . '%');
-        }
-
-        // TERAPKAN FILTER SORTING
-        switch ($filter) {
-            case 'popular':
-                // TODO: Nanti bisa diganti dengan query berdasarkan jumlah penjualan
-                // Untuk saat ini, urutkan berdasarkan ID terkecil (simulasi produk populer)
-                $barangs->orderBy('id', 'asc');
-                break;
-            case 'price_low':
-                $barangs->orderBy('harga', 'asc');
-                break;
-            case 'price_high':
-                $barangs->orderBy('harga', 'desc');
-                break;
-            case 'newest':
-                $barangs->orderBy('created_at', 'desc');
-                break;
-            default:
-                // Default: urutkan berdasarkan terbaru
-                $barangs->orderBy('created_at', 'desc');
-                break;
-        }
-
-        $barangs = $barangs->paginate(8);
-
-        return view('buyer.produk', [
-            'data_barang' => $barangs,
-            'search' => $search,
-            'filter' => $filter
+        $request->merge([
+            'sort_by' => $sortBy,
+            'sort_direction' => $sortDir,
         ]);
-    }
 
+        $models = QuerySearch::apply(
+            query: Barang::query(),
+            request: $request,
+            searchableColumns: ['nama_barang'],
+            filterableColumns: [],
+            perPage: 8
+        );
+
+        return view('buyer.produk', get_defined_vars());
+    }
     public function tentang()
     {
         // RETURN VIEW TENTANG KAMI

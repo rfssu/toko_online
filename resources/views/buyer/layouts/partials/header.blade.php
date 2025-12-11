@@ -79,26 +79,51 @@
             </div>
 
             {{-- Profile Icon --}}
-            <div class="dropdown dropdown-end">
-                <div tabindex="0" role="button"
-                    class="btn btn-ghost btn-circle avatar border border-gray-200 hover:border-amber-500 transition">
-                    <div class="w-9 rounded-full">
-                        {{-- Placeholder Avatar --}}
-                        <img alt="User" src="https://ui-avatars.com/api/?name=User&background=random" />
-                    </div>
+            @auth
+                <div class="dropdown dropdown-end">
+                    <label tabindex="0" class="btn btn-ghost btn-circle avatar online">
+                        <div class="w-10 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2">
+                            @php
+                                $initials = strtoupper(substr(Auth::user()->name, 0, 2));
+                                $colors = [
+                                    'bg-red-500',
+                                    'bg-blue-500',
+                                    'bg-green-500',
+                                    'bg-yellow-500',
+                                    'bg-purple-500',
+                                    'bg-teal-500',
+                                ];
+                                $bg = $colors[ord($initials) % count($colors)];
+                            @endphp
+
+                            <div
+                                class="w-10 h-10 rounded-full {{ $bg }} flex items-center justify-center text-white font-bold">
+                                {{ $initials }}
+                            </div>
+                        </div>
+                    </label>
+                    <ul tabindex="0"
+                        class="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52 border border-gray-100">
+                        <li>
+                            <a href="{{ route('profile') }}" class="justify-between">
+                                Profile
+                                <span class="badge badge-ghost text-xs">New</span>
+                            </a>
+                        </li>
+                        <li><a>Riwayat Pesanan</a></li>
+                        <li>
+                            <form action="{{ route('logout') }}" method="POST">@csrf
+                                <button type="submit">Logout</button>
+                            </form>
+                        </li>
+                    </ul>
                 </div>
-                <ul tabindex="0"
-                    class="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52 border border-gray-100">
-                    <li>
-                        <a href="{{ route('profile') }}" class="justify-between">
-                            Profile
-                            <span class="badge badge-ghost text-xs">New</span>
-                        </a>
-                    </li>
-                    <li><a>Riwayat Pesanan</a></li>
-                    <li><a>Logout</a></li>
-                </ul>
-            </div>
+            @else
+                <a href="{{ route('login') }}"
+                    class="btn btn-outline btn-sm rounded-full">
+                    Login
+                </a>
+            @endauth
         </div>
     </div>
 </div>
