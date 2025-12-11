@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\AutoFill;
+use App\Helpers\QuerySearch;
 use App\Models\Barang;
 use App\Traits\CrudTrait;
 use Illuminate\Http\Request;
@@ -18,9 +19,14 @@ class BarangController extends Controller
     {
         $this->user = Auth::user();
     }
-    public function index()
+    public function index(Request $request)
     {
-        $models = Barang::all();
+        $models = QuerySearch::apply(
+            query: Barang::query(),
+            request: $request,
+            searchableColumns: ['nama_barang'],
+            perPage: 10
+        );
 
         return view('seller/pages/barangs/index', get_defined_vars());
     }
