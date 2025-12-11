@@ -25,7 +25,7 @@ class QuerySearch
         int $perPage = 10
     ) {
         // Apply search
-        if ($request->has('search') && !empty($request->search)) {
+        if ($request->filled('search')) {
             $searchTerm = $request->search;
             $query->where(function ($q) use ($searchableColumns, $searchTerm) {
                 foreach ($searchableColumns as $column) {
@@ -35,19 +35,23 @@ class QuerySearch
         }
 
         // Apply filters
-        foreach ($filterableColumns as $column) {
-            if ($request->has($column) && !empty($request->$column)) {
-                $query->where($column, $request->$column);
+        foreach ($filterableColumns as $filterKey => $column) {
+            $requestKey = is_string($filterKey) ? $filterKey : $column;
+
+            $value = $request->input($requestKey);
+
+            if (!empty($value)) {
+                $query->where($column, $value);
             }
         }
 
         // Apply sorting
-        if ($request->has('sort_by') && !empty($request->sort_by)) {
+        if ($request->filled('sort_by')) {
             $sortDirection = $request->get('sort_direction', 'asc');
             $query->orderBy($request->sort_by, $sortDirection);
         }
 
-        // Apply pagination with dynamic per_page from request
+        // Apply pagination
         $perPageFromRequest = $request->get('per_page', $perPage);
         return $query->paginate($perPageFromRequest)->appends($request->except('page'));
     }

@@ -10,6 +10,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\BarangController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\PesananController;
 
 /*
 |--------------------------------------------------------------------------
@@ -50,10 +51,6 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/pesanan/{id}/delete', [PesanController::class, 'delete'])->name('pesanan.delete');
     // BUYER - Order History
     Route::get('/history', [HistoryController::class, 'index'])->name('history');
-    // SELLER - Manage Pesanan (pickup orders)
-    Route::get('/pesanans', [PesananController::class, 'index'])->name('pesanans.index');
-    Route::get('/pesanans/{id}', [PesananController::class, 'show'])->name('pesanans.show');
-    Route::post('/pesanans/{id}/ready', [PesananController::class, 'markReady'])->name('pesanans.ready');
     Route::middleware(['role:admin,seller'])->group(function () {
         Route::get('dashboard', function () {
             return view('seller/pages/dashboard');
@@ -62,6 +59,6 @@ Route::middleware(['auth'])->group(function () {
 
         Route::resource('users', UserController::class);
         Route::resource('barangs', BarangController::class);
+        Route::resource('pesanans', PesananController::class);
     });
 });
-

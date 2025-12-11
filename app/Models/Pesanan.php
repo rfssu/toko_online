@@ -35,5 +35,10 @@ class Pesanan extends Model
     public function getStatusValAttribute()
     {
         return self::STATUS[$this->status];
+    }   
+
+    public function getTotalAttribute()
+    {
+        return $this->pesanan_detail->sum('total');
     }
 }

@@ -45,8 +45,8 @@
                     <li>
                         <a href="{{ route('pesanans.index') }}"
                             class="flex gap-4 {{ request()->routeIs('pesanans.*') ? 'active' : '' }}">
-                            <i class="ri-stack-fill"></i>
-                            Olah pesanan
+                            <i class="ri-file-list-3-line"></i>
+                            Pesanan
                         </a>
                     </li>
 
