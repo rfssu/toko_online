@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Pesanan extends Model
 {
-    use Validatable;
+    use HasFactory, Validatable;
 
     protected $fillable = [
         'kode',

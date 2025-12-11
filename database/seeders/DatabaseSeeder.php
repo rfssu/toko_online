@@ -2,10 +2,7 @@
 
 namespace Database\Seeders;
 
-// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-
-use function Symfony\Component\String\b;
 
 class DatabaseSeeder extends Seeder
 {
@@ -14,6 +11,7 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
+        // Create admin user
         \App\Models\User::factory()->create([
             'name' => 'Admin',
             'email' => 'admin@admin',
@@ -21,6 +19,8 @@ class DatabaseSeeder extends Seeder
             'role' => 'admin',
             'status' => 'on',
         ]);
+
+        // Create seller user
         \App\Models\User::factory()->create([
             'name' => 'Seller',
             'email' => 'seller@seller',
@@ -28,6 +28,20 @@ class DatabaseSeeder extends Seeder
             'role' => 'seller',
             'status' => 'on',
         ]);
+
+        // Create 1000 regular users
         \App\Models\User::factory(1000)->create();
+
+        // Create barang
+        \App\Models\Barang::factory(200)->create();
+
+        // Create pesanan dengan status acak antara 'co' dan 'pickup'
+        \App\Models\Pesanan::factory(500)->create();
+
+        // Create pesanan detail dengan pesanan_id (yang sudah terhubung ke pesanan)
+        \App\Models\PesananDetail::factory(1000)->create();
+
+        // Create pesanan detail tanpa pesanan_id (null)
+        \App\Models\PesananDetail::factory(200)->withoutPesanan()->create();
     }
 }

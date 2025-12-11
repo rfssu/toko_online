@@ -10,10 +10,11 @@ class PesananDetail extends Model
     use HasFactory;
 
     protected $fillable = [
+        'user_id',
         'pesanan_id',
         'barang_id',
         'jumlah',
-        'jumlah_harga'
+        'harga'
     ];
     public function barang()
     {
@@ -23,5 +24,10 @@ class PesananDetail extends Model
     public function pesanan()
     {
         return $this->belongsTo('App\Models\Pesanan', 'pesanan_id', 'id');
+    }
+
+    public function getTotalAttribute()
+    {
+        return $this->harga * $this->jumlah;
     }
 }
