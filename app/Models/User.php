@@ -114,13 +114,18 @@ class User extends Authenticatable
         return self::ROLE[$this->role];
     }
 
-    public function activeCart()
-    {
-        return $this->hasOne(Pesanan::class)->where('status', 'keranjang');
-    }
-
     public function pesanan()
     {
         return $this->hasMany(Pesanan::class);
+    }
+
+    public function pesanan_detail()
+    {
+        return $this->hasMany(PesananDetail::class, 'user_id', 'id');
+    }
+
+    public function getBarangKeranjangAttribute()
+    {
+        return $this->pesanan_detail->where('pesanan_id', null);
     }
 }
