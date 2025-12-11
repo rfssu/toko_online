@@ -43,11 +43,25 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/profile', [HomeController::class, 'profile'])->name('profile');
     Route::post('/profile/update', [HomeController::class, 'updateProfile'])->name('profile.update');
     Route::post('/profile/password', [HomeController::class, 'updatePassword'])->name('profile.password');
+    // BUYER - Cart Routes
+    Route::post('/cart/add', [PesanController::class, 'addToCartAjax'])->name('cart.add');
+    Route::get('/check-out', [PesanController::class, 'check_out'])->name('checkout');
+    Route::post('/pesanan/konfirmasi', [PesanController::class, 'konfirmasi'])->name('pesanan.konfirmasi');
+    Route::get('/pesanan/{id}/delete', [PesanController::class, 'delete'])->name('pesanan.delete');
+    // BUYER - Order History
+    Route::get('/history', [HistoryController::class, 'index'])->name('history');
+    // SELLER - Manage Pesanan (pickup orders)
+    Route::get('/pesanans', [PesananController::class, 'index'])->name('pesanans.index');
+    Route::get('/pesanans/{id}', [PesananController::class, 'show'])->name('pesanans.show');
+    Route::post('/pesanans/{id}/ready', [PesananController::class, 'markReady'])->name('pesanans.ready');
     Route::middleware(['role:admin,seller'])->group(function () {
         Route::get('dashboard', function () {
             return view('seller/pages/dashboard');
         })->name('dashboard');
+
+
         Route::resource('users', UserController::class);
         Route::resource('barangs', BarangController::class);
     });
 });
+

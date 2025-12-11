@@ -42,6 +42,14 @@
                             Olah barang
                         </a>
                     </li>
+                    <li>
+                        <a href="{{ route('pesanans.index') }}"
+                            class="flex gap-4 {{ request()->routeIs('pesanans.*') ? 'active' : '' }}">
+                            <i class="ri-stack-fill"></i>
+                            Olah pesanan
+                        </a>
+                    </li>
+
                     <li class="mt-4">
                         <h2 class="menu-title text-base-content/60 pl-4">
                             <span>Pengaturan</span>

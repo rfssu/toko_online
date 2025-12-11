@@ -204,9 +204,8 @@ class FormFieldMultiple {
                 let key = element.name;
                 let val = model[key] ?? null;
 
-                element.name = `${that.fieldPrefix}[${
-                    model.id ?? unique
-                }][${key}]`;
+                element.name = `${that.fieldPrefix}[${model.id ?? unique
+                    }][${key}]`;
                 element.value = val;
                 element.dataset.field = key;
 
@@ -557,6 +556,7 @@ $(function () {
         });
     }
 });
+
 
 document.addEventListener("DOMContentLoaded", function () {
     document.querySelectorAll("[data-tip]").forEach(function (element) {

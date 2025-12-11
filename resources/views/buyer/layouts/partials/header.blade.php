@@ -55,30 +55,44 @@
                 <i class="fa-solid fa-magnifying-glass"></i>
             </button>
 
+            @php
+                use App\Models\Pesanan;
+                $user_cart = Auth::check()
+                    ? Pesanan::where('user_id', Auth::id())
+                        ->where('status', 'keranjang')
+                        ->first()
+                    : null;
+                $cart_count = $user_cart ? $user_cart->getItemCount() : 0;
+                $cart_total = $user_cart ? $user_cart->jumlah_harga : 0;
+            @endphp
             {{-- Cart Icon dengan Badge --}}
             <div class="dropdown dropdown-end">
                 <div tabindex="0" role="button" class="btn btn-ghost btn-circle">
                     <div class="indicator">
                         <i class="fa-solid fa-cart-shopping text-xl text-gray-700"></i>
-                        <span class="badge badge-sm badge-error text-white indicator-item border-none">0</span>
+                        <span class="badge badge-sm badge-error text-white indicator-item border-none" id="cart-badge">
+                            {{ $cart_count }}
+                        </span>
                     </div>
                 </div>
-                {{-- Cart Preview Dropdown --}}
                 <div tabindex="0"
-                    class="mt-3 z-[1] card card-compact dropdown-content w-52 bg-base-100 shadow-xl border border-gray-100">
+                    class="mt-3 z-[1] card card-compact dropdown-content w-52 bg-base-100 shadow-xl border">
                     <div class="card-body">
-                        <span class="font-bold text-lg">0 Barang</span>
-                        <span class="text-info text-amber-600">Subtotal: Rp 0</span>
+                        <span class="font-bold text-lg" id="cart-count-text">{{ $cart_count }} Barang</span>
+                        <span class="text-amber-600" id="cart-total-text">
+                            Subtotal: Rp {{ number_format($cart_total, 0, ',', '.') }}
+                        </span>
                         <div class="card-actions">
-                            <button
-                                class="btn bg-amber-600 hover:bg-amber-700 text-white btn-block btn-sm border-none">Lihat
-                                Keranjang</button>
+                            <a href="{{ route('checkout') }}"
+                                class="btn bg-amber-600 hover:bg-amber-700 text-white btn-block btn-sm border-none">
+                                Lihat Keranjang
+                            </a>
                         </div>
                     </div>
                 </div>
             </div>
 
-            {{-- Profile Icon --}}
+             {{-- Profile Icon --}}
             @auth
                 <div class="dropdown dropdown-end">
                     <label tabindex="0" class="btn btn-ghost btn-circle avatar online">

@@ -25,6 +25,70 @@ class PesanController extends Controller
         return view('pesan.index', compact('barang'));
     }
 
+    public function addToCartAjax(Request $request)
+    {
+        try {
+            $request->validate([
+                'barang_id' => 'required|exists:barangs,id',
+                'jumlah' => 'integer|min:1'
+            ]);
+            $barang = Barang::findOrFail($request->barang_id);
+            $jumlah = $request->jumlah ?? 1;
+            // Validasi stok
+            if ($jumlah > $barang->stok) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Stok tidak mencukupi'
+                ], 400);
+            }
+            // Get or create keranjang (status='keranjang')
+            $pesanan = Pesanan::firstOrCreate(
+                [
+                    'user_id' => Auth::id(),
+                    'status' => 'keranjang'
+                ],
+                [
+                    'tanggal' => now(),
+                    'kode' => mt_rand(100, 999),
+                    'jumlah_harga' => 0
+                ]
+            );
+            // Check if item already in cart
+            $pesananDetail = PesananDetail::where('pesanan_id', $pesanan->id)
+                ->where('barang_id', $barang->id)
+                ->first();
+            if ($pesananDetail) {
+                // Update quantity
+                $pesananDetail->jumlah += $jumlah;
+                $pesananDetail->jumlah_harga += ($barang->harga * $jumlah);
+                $pesananDetail->save();
+            } else {
+                // Create new item
+                PesananDetail::create([
+                    'pesanan_id' => $pesanan->id,
+                    'barang_id' => $barang->id,
+                    'jumlah' => $jumlah,
+                    'jumlah_harga' => $barang->harga * $jumlah
+                ]);
+            }
+            // Update total
+            $pesanan->jumlah_harga += ($barang->harga * $jumlah);
+            $pesanan->save();
+            return response()->json([
+                'success' => true,
+                'message' => 'Produk berhasil ditambahkan ke keranjang',
+                'cart_count' => $pesanan->getItemCount(),
+                'cart_total' => $pesanan->jumlah_harga
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+
     public function pesan(Request $request, $id)
     {
         $barang = Barang::where('id', $id)->first();
@@ -45,7 +109,7 @@ class PesanController extends Controller
             $pesanan->tanggal = $tanggal;
             $pesanan->status = 0;
             $pesanan->jumlah_harga = 0;
-            $pesanan->kode = mt_rand(100,999);
+            $pesanan->kode = mt_rand(100, 999);
             $pesanan->save();
         }
 
@@ -83,57 +147,56 @@ class PesanController extends Controller
 
     public function check_out()
     {
-        $pesanan = Pesanan::where('user_id', Auth::user()->id)->where('status', 0)->first();
+        $pesanan = Pesanan::where('user_id', Auth::user()->id)
+            ->where('status', 'keranjang')
+            ->first();
+
         $pesanan_details = [];
-        if (!empty($pesanan)) {
+        if ($pesanan) {
             $pesanan_details = PesananDetail::where('pesanan_id', $pesanan->id)->get();
         }
-
-        return view('pesan.check_out', compact('pesanan', 'pesanan_details'));
+        return view('pesan.keranjang', compact('pesanan', 'pesanan_details'));
     }
 
     public function delete($id)
     {
         $pesanan_detail = PesananDetail::where('id', $id)->first();
-
         $pesanan = Pesanan::where('id', $pesanan_detail->pesanan_id)->first();
         $pesanan->jumlah_harga = $pesanan->jumlah_harga - $pesanan_detail->jumlah_harga;
         $pesanan->update();
-
         $pesanan_detail->delete();
-
-        Alert::error('Pesanan Berhasil Dihapus', 'Hapus');
-
+        Alert::error('Item berhasil dihapus dari keranjang', 'Hapus');
         return redirect('check-out');
     }
 
     public function konfirmasi()
     {
         $user = User::where('id', Auth::user()->id)->first();
-        if (empty($user->alamat)) {
-            Alert::error('Identitasi Harap dilengkapi', 'Error');
-            return redirect('profile');
-        } 
-        if (empty($user->no_hp)) {
-            Alert::error('Identitasi Harap dilengkapi', 'Error');
+
+        // Validasi user profile
+        if (empty($user->alamat) || empty($user->no_hp)) {
+            Alert::error('Silahkan lengkapi profil Anda terlebih dahulu', 'Error');
             return redirect('profile');
         }
-
-
-        $pesanan = Pesanan::where('user_id', Auth::user()->id)->where('status', 0)->first();
-        $pesanan_id = $pesanan->id;
-        $pesanan->status = 1;
-        $pesanan->update();
-
-        $pesanan_details = PesananDetail::where('pesanan_id', $pesanan_id)->get();
-        foreach ($pesanan_details as $pesanan_detail) {
-            $barang = Barang::where('id', $pesanan_detail->barang_id)->first();
-            $barang->stok = $barang->stok - $pesanan_detail->jumlah;
-            $barang->update();
+        $pesanan = Pesanan::where('user_id', Auth::user()->id)
+            ->where('status', 'keranjang')
+            ->first();
+        if (!$pesanan) {
+            Alert::error('Keranjang kosong', 'Error');
+            return redirect('/');
         }
+        // Update status ke checkout
+        $pesanan->status = 'checkout';
+        $pesanan->save();
+        // Kurangi stok
+        $pesanan_details = PesananDetail::where('pesanan_id', $pesanan->id)->get();
+        foreach ($pesanan_details as $detail) {
+            $barang = Barang::find($detail->barang_id);
+            $barang->stok -= $detail->jumlah;
+            $barang->save();
+        }
+        Alert::success('Pesanan berhasil dikonfirmasi! Silahkan tunggu pemberitahuan siap pickup', 'Success');
 
-        Alert::success('Pesanan Berhasil Check Out Silahkan Melakukan Pembayaran', 'Success');
-
-        return redirect('history');
+        return redirect()->route('history');
     }
 }

@@ -103,10 +103,6 @@ class User extends Authenticatable
         ];
     }
 
-    public function pesanan()
-    {
-        return $this->hasMany('App\Models\Pesanan', 'user_id', 'id');
-    }
 
     public function getStatusValAttribute()
     {
@@ -116,5 +112,15 @@ class User extends Authenticatable
     public function getRoleValAttribute()
     {
         return self::ROLE[$this->role];
+    }
+
+    public function activeCart()
+    {
+        return $this->hasOne(Pesanan::class)->where('status', 'keranjang');
+    }
+
+    public function pesanan()
+    {
+        return $this->hasMany(Pesanan::class);
     }
 }

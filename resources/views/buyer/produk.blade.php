@@ -75,7 +75,8 @@
                     </a>
                     <a href="{{ route('produk', ['filter' => 'newest', 'search' => request('search')]) }}"
                         class="btn btn-sm {{ (request('filter') ?? '') == 'newest' ? 'bg-blue-600 text-white hover:bg-blue-700' : 'bg-white hover:bg-blue-50 text-gray-700' }} border-gray-300 rounded-full">
-                        <i class="fa-solid fa-clock {{ (request('filter') ?? '') == 'newest' ? 'text-white' : 'text-blue-600' }}"></i>
+                        <i
+                            class="fa-solid fa-clock {{ (request('filter') ?? '') == 'newest' ? 'text-white' : 'text-blue-600' }}"></i>
                         Terbaru
                     </a>
                 </div>
@@ -168,7 +169,7 @@
                         </div>
 
                         {{-- Button Add to Cart --}}
-                        <button
+                        <button onclick="addToCart({{ $item->id }}, '{{ $item->nama_barang }}')"
                             class="bg-gray-900 text-white w-8 h-8 md:w-10 md:h-10 rounded-full flex items-center justify-center hover:bg-amber-600 transition shadow-lg transform active:scale-90">
                             <i class="fa-solid fa-cart-plus"></i>
                         </button>
