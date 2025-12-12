@@ -44,7 +44,7 @@
                 <table class="table table-zebra">
                     <!-- head -->
                     <thead>
-                        <tr>
+                        <tr>    
                             <th>No</th>
                             <th>Aksi</th>
                             <x-sort-th column="pesanans.kode" label="Kode" />
@@ -58,10 +58,15 @@
                             <tr>
                                 <td>{{ $models->firstItem() + $index }}</td>
                                 <td>
-                                    <a href="{{ $editRoute($model) }}" onclick="modalFormAjax(this, event)"
-                                        class="btn btn-success btn-sm text-white">
-                                        <i class="ri-check-line"></i>
-                                    </a>
+                                    @if ($model->status === 'co')
+                                        <a href="{{ $editRoute($model) }}" onclick="modalFormAjax(this, event)" data-modal-size="large" class="btn btn-success btn-sm text-white">
+                                            <i class="ri-check-line"></i>
+                                        </a>
+                                    @elseif ($model->status === 'pickup')
+                                        <a href="{{ $editRoute($model) }}" onclick="modalFormAjax(this, event)" data-modal-size="large" class="btn btn-warning btn-sm text-white">
+                                            <i class="ri-article-line"></i>
+                                        </a>
+                                    @endif
                                 </td>
                                 <td>{{ $model->kode }}</td>
                                 <td>{{ $model->user->name }}</td>

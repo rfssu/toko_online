@@ -1,12 +1,14 @@
 @php
-    if (empty($model->id)) {
-        $formHref = fn() => route('users.store');
-    }
+    $formHref = fn($model) => route('pesanans.update', $model->id);
     // dd($model);
+
+    use Carbon\Carbon;
+    $statusCo = $model->status === 'co';
+    $statusPickup = $model->status === 'pickup';
 @endphp
 
 <div class="p-6">
-    <h2 class="text-2xl font-bold mb-6">Konfirmasi Pesanan</h2>
+    <h2 class="text-2xl font-bold mb-6">{{ $statusCo ? 'Konfirmasi Pesanan' : 'Detail Pesanan' }}</h2>
 
     {{-- Ringkasan Pesanan --}}
     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
@@ -36,9 +38,9 @@
             <div class="card-body p-4">
                 <div class="flex items-center gap-2 text-sm text-base-content/60 mb-1">
                     <i class="ri-calendar-line"></i>
-                    <span>Tanggal Pickup</span>
+                    <span>Tanggal</span>
                 </div>
-                <p class="text-xl font-bold">{{ now()->format('d F Y') }}</p>
+                <p class="text-xl font-bold"> {{ $statusPickup ? Carbon::parse($model->tanggal_pickup)->translatedFormat('d F Y') : Carbon::parse($model->created_at)->translatedFormat('d F Y') }}</p>
                 <div class="badge badge-warning badge-sm mt-1">{{ $model->status_val }}</div>
             </div>
         </div>
@@ -85,12 +87,16 @@
     </div>
 
     {{-- Aksi --}}
-    <div class="flex justify-end">
-        <button class="btn btn-primary">
-            <i class="ri-check-line"></i>
-            Konfirmasi Pickup
-        </button>
-    </div>
+    @if ($statusCo)
+        <form action="{{ $formHref($model) }}" method="POST" id="form-elem" class="flex justify-end">
+            @csrf
+            @method('PUT')
+            <button class="btn btn-primary" type="submit">
+                <i class="ri-check-line"></i>
+                Konfirmasi Pickup
+            </button>
+        </form>
+    @endif
 </div>
 
 <script id="data-json" type="application/json">

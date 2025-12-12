@@ -22,7 +22,8 @@ class QuerySearch
         Request $request,
         array $searchableColumns = [],
         array $filterableColumns = [],
-        int $perPage = 10
+        int $perPage = 10,
+        array $defaultSort = []
     ) {
         // Apply search
         if ($request->filled('search')) {
@@ -37,7 +38,6 @@ class QuerySearch
         // Apply filters
         foreach ($filterableColumns as $filterKey => $column) {
             $requestKey = is_string($filterKey) ? $filterKey : $column;
-
             $value = $request->input($requestKey);
 
             if (!empty($value)) {
@@ -49,6 +49,11 @@ class QuerySearch
         if ($request->filled('sort_by')) {
             $sortDirection = $request->get('sort_direction', 'asc');
             $query->orderBy($request->sort_by, $sortDirection);
+        } elseif (!empty($defaultSort)) {
+            // Apply default sorting jika tidak ada sort dari request
+            foreach ($defaultSort as $column => $direction) {
+                $query->orderBy($column, $direction);
+            }
         }
 
         // Apply pagination

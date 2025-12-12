@@ -26,7 +26,11 @@ class PesananController extends Controller
             request: $request,
             searchableColumns: ['pesanans.kode', 'users.name', 'users.no_hp', 'pesanans.status'],
             filterableColumns: ['status' => 'pesanans.status'],
-            perPage: 10
+            perPage: 10,
+            defaultSort: [
+                'pesanans.status' => 'asc',
+                'pesanans.created_at' => 'desc'
+            ]
         );
 
         return view('seller/pages/pesanans/index', get_defined_vars());
@@ -44,14 +48,13 @@ class PesananController extends Controller
     {
         $model = $id ? $this->findModel(['id' => $id]) : new Pesanan;
         $params = $request->all();
-        $params['password'] ??= $model->password;
-        $model->validator($params, $model->rules(), [], $model->labels())->validate();
         if ($request->ajax()) {
             return;
         }
-        AutoFill::fill($model, params: $params);
+        $model->status = 'pickup';
+        $model->tanggal_pickup = now();
         $model->saveOrFail();
-        return redirect()->back()->with('success', 'Simpan Berhasil');
+        return redirect()->back()->with('success', 'Pesanan berhasil dikonfirmasi!');
     }
 
     private function findModel(array $params)

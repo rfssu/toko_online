@@ -274,6 +274,17 @@ globalThis.modalFormAjax = (element, event) => {
         return;
     }
 
+    let modalSize = element.dataset.modalSize || 'default';
+    let modalBox = modalElem.querySelector(".modal-box");
+    
+    modalBox.className = "modal-box";
+    
+    if (modalSize === 'large') {
+        modalBox.classList.add('w-11/12', 'max-w-5xl');
+    } else if (modalSize === 'medium') {
+        modalBox.classList.add('w-11/12', 'max-w-3xl');
+    }
+
     let toggleCheckbox = document.querySelector("#close-modal");
     if (toggleCheckbox) {
         toggleCheckbox.checked = true;
@@ -308,7 +319,6 @@ globalThis.modalFormAjax = (element, event) => {
 
     return;
 };
-
 globalThis.modalDeleteConfirm = function (elem, event, callback) {
     event?.preventDefault();
 
