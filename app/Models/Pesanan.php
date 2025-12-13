@@ -32,10 +32,16 @@ class Pesanan extends Model
     {
         return $this->hasMany(PesananDetail::class, 'pesanan_id', 'id');
     }
+
+    public function getItemCount()
+    {
+        return $this->pesanan_detail()->sum('jumlah');
+    }
+
     public function getStatusValAttribute()
     {
         return self::STATUS[$this->status];
-    }   
+    }
 
     public function getTotalAttribute()
     {

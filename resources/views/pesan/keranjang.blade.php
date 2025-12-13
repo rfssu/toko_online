@@ -52,7 +52,7 @@
                                                 {{ number_format($detail->barang->harga, 0, ',', '.') }}
                                             </p>
                                             <p class="text-amber-600 font-bold mt-1">
-                                                Rp {{ number_format($detail->jumlah_harga, 0, ',', '.') }}
+                                                Rp {{ number_format($detail->total, 0, ',', '.') }}
                                             </p>
                                         </div>
 
@@ -81,7 +81,7 @@
                                 <div class="flex justify-between text-sm">
                                     <span class="text-gray-600">Subtotal ({{ $pesanan_details->count() }} item)</span>
                                     <span class="font-semibold">Rp
-                                        {{ number_format($pesanan->jumlah_harga, 0, ',', '.') }}</span>
+                                        {{ number_format($pesanan->total ?? 0, 0, ',', '.') }}</span>
                                 </div>
                                 <div class="flex justify-between text-sm">
                                     <span class="text-gray-600">Biaya Layanan</span>
@@ -91,7 +91,7 @@
                                 <div class="flex justify-between text-lg font-bold">
                                     <span>Total</span>
                                     <span class="text-amber-600">Rp
-                                        {{ number_format($pesanan->jumlah_harga, 0, ',', '.') }}</span>
+                                        {{ number_format($pesanan->total ?? 0, 0, ',', '.') }}</span>
                                 </div>
                             </div>
 

@@ -49,8 +49,7 @@ class PesanController extends Controller
                 ],
                 [
                     'tanggal' => now(),
-                    'kode' => mt_rand(100, 999),
-                    'jumlah_harga' => 0
+                    'kode' => mt_rand(100, 999)
                 ]
             );
             // Check if item already in cart
@@ -58,27 +57,24 @@ class PesanController extends Controller
                 ->where('barang_id', $barang->id)
                 ->first();
             if ($pesananDetail) {
-                // Update quantity
+                // Update quantity (harga sudah tersimpan, hanya update jumlah)
                 $pesananDetail->jumlah += $jumlah;
-                $pesananDetail->jumlah_harga += ($barang->harga * $jumlah);
                 $pesananDetail->save();
             } else {
-                // Create new item
+                // Create new item (simpan harga per unit)
                 PesananDetail::create([
                     'pesanan_id' => $pesanan->id,
                     'barang_id' => $barang->id,
                     'jumlah' => $jumlah,
-                    'jumlah_harga' => $barang->harga * $jumlah
+                    'harga' => $barang->harga
                 ]);
             }
-            // Update total
-            $pesanan->jumlah_harga += ($barang->harga * $jumlah);
-            $pesanan->save();
+            // Total akan di-calculate otomatis via getTotalAttribute()
             return response()->json([
                 'success' => true,
                 'message' => 'Produk berhasil ditambahkan ke keranjang',
                 'cart_count' => $pesanan->getItemCount(),
-                'cart_total' => $pesanan->jumlah_harga
+                'cart_total' => $pesanan->total  // Use attribute instead
             ]);
         } catch (\Exception $e) {
             return response()->json([
@@ -161,11 +157,11 @@ class PesanController extends Controller
     public function delete($id)
     {
         $pesanan_detail = PesananDetail::where('id', $id)->first();
-        $pesanan = Pesanan::where('id', $pesanan_detail->pesanan_id)->first();
-        $pesanan->jumlah_harga = $pesanan->jumlah_harga - $pesanan_detail->jumlah_harga;
-        $pesanan->update();
+
+        // Delete item (total will be recalculated automatically)
         $pesanan_detail->delete();
-        Alert::error('Item berhasil dihapus dari keranjang', 'Hapus');
+
+        Alert::success('Item berhasil dihapus dari keranjang', 'Hapus');
         return redirect('check-out');
     }
 

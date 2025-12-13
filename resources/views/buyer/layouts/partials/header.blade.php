@@ -63,7 +63,7 @@
                         ->first()
                     : null;
                 $cart_count = $user_cart ? $user_cart->getItemCount() : 0;
-                $cart_total = $user_cart ? $user_cart->jumlah_harga : 0;
+                $cart_total = $user_cart ? $user_cart->total : 0;
             @endphp
             {{-- Cart Icon dengan Badge --}}
             <div class="dropdown dropdown-end">
@@ -92,7 +92,7 @@
                 </div>
             </div>
 
-             {{-- Profile Icon --}}
+            {{-- Profile Icon --}}
             @auth
                 <div class="dropdown dropdown-end">
                     <label tabindex="0" class="btn btn-ghost btn-circle avatar online">
@@ -133,8 +133,7 @@
                     </ul>
                 </div>
             @else
-                <a href="{{ route('login') }}"
-                    class="btn btn-outline btn-sm rounded-full">
+                <a href="{{ route('login') }}" class="btn btn-outline btn-sm rounded-full">
                     Login
                 </a>
             @endauth
