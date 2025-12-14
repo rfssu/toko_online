@@ -4,7 +4,7 @@
             icon: 'success',
             title: 'Sukses',
             timer: 1000,
-            theme: localStorage.getItem('theme') === 'retro' ? 'light' : 'dark',
+            theme: localStorage.getItem('theme') === 'halloween' ? 'dark' : 'light',
             text: '{{ session('success') }}',
             showConfirmButton: false
         });
@@ -14,7 +14,7 @@
         Swal.fire({
             icon: 'error',
             title: 'Gagal',
-            theme: localStorage.getItem('theme') === 'retro' ? 'light' : 'dark',
+            theme: localStorage.getItem('theme') === 'halloween' ? 'dark' : 'light',
             text: '{{ session('error') }}',
             showConfirmButton: false
         });

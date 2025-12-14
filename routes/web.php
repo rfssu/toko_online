@@ -65,7 +65,7 @@ Route::middleware(['auth'])->group(function () {
 
         Route::resource('users', UserController::class);
         Route::resource('barangs', BarangController::class);
-        Route::resource('pesanans', PesananController::class);
+        Route::resource('pesanans', PesananController::class)->except(['create', 'store', 'destroy']);
     });
 });
 
