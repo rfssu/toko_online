@@ -18,11 +18,13 @@ class PesananFactory extends Factory
      */
     public function definition(): array
     {
+        $randomDate = fake()->dateTimeBetween('-3 months', 'now');
         return [
             'kode' => 'PO-' . strtoupper($this->faker->unique()->bothify('####??##')),
             'user_id' => User::inRandomOrder()->first()->id ?? User::factory(),
             'tanggal_pickup' => $this->faker->dateTimeBetween('now', '+30 days'),
             'status' => $this->faker->randomElement(['co', 'pickup']),
+            'created_at' => $randomDate,
         ];
     }
 }

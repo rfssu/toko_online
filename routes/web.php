@@ -1,17 +1,18 @@
 <?php
 
-use App\Http\Controllers\FileController;
-use App\Http\Controllers\HistoryController;
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\PesanController;
-use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\ForgotPasswordController;
-use App\Http\Controllers\UserController;
 use App\Http\Controllers\BarangController;
-use App\Http\Controllers\HomeController;
-use App\Http\Controllers\AuthController;
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\PesanController;
 use App\Http\Controllers\PesananController;
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\HistoryController;
 use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\LabaController;
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\FileController; // Kept from original, not in provided snippet but used later
+use App\Http\Controllers\HomeController; // Kept from original, not in provided snippet but used later
+use App\Http\Controllers\ProfileController; // Kept from original, not in provided snippet but used later
+use App\Http\Controllers\ForgotPasswordController; // Kept from original, not in provided snippet but used later
 
 /*
 |--------------------------------------------------------------------------
@@ -58,11 +59,12 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/payment/{pesanan_id}', [PaymentController::class, 'index'])->name('payment.index');
     Route::get('/payment/{pesanan_id}/status', [PaymentController::class, 'checkStatus'])->name('payment.status');
     Route::middleware(['role:admin,seller'])->group(function () {
-        Route::get('dashboard', function () {
-            return view('seller/pages/dashboard');
-        })->name('dashboard');
+        Route::get('dashboard', [LabaController::class, 'index'])->name('dashboard');
+        Route::get('dashboard/export', [LabaController::class, 'export'])->name('dashboard.export');
 
 
+
+        // Resource routes
         Route::resource('users', UserController::class);
         Route::resource('barangs', BarangController::class);
         Route::resource('pesanans', PesananController::class);

@@ -45,4 +45,10 @@ class Barang extends Model
             'keterangan' => 'Keterangan'
         ];
     }
+
+    // Relationship to order details (for sales tracking)
+    public function pesanan_detail()
+    {
+        return $this->hasMany(PesananDetail::class, 'barang_id');
+    }
 }

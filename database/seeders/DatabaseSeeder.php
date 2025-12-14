@@ -49,6 +49,7 @@ class DatabaseSeeder extends Seeder
         // Create pesanan dengan status acak antara 'co' dan 'pickup'
         \App\Models\Pesanan::factory(500)->create();
 
+
         // Create pesanan detail dengan pesanan_id (yang sudah terhubung ke pesanan)
         \App\Models\PesananDetail::factory(1000)->create();
 
