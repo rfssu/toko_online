@@ -65,7 +65,7 @@
 
                     {{-- Gambar Produk --}}
                     <div class="relative aspect-square bg-gray-100 rounded-lg mb-3 overflow-hidden">
-                        <img src="{{ $item->file('gambar')->hasFile() ? $item->file('gambar')->preview() : 'https://via.placeholder.com/300?text=No+Image' }}"
+                        <img src="{{ $item->file('gambar')->hasFile() ? $item->file('gambar')->preview() : Vite::asset('resources/assets/photos/bakpia.jpg') }}"
                             alt="{{ $item->nama_barang }}"
                             class="w-full h-full object-cover group-hover:scale-110 transition duration-500">
 
@@ -126,7 +126,7 @@
                     {{-- Gambar Produk --}}
                     <div class="relative aspect-square bg-gray-100 rounded-lg mb-3 overflow-hidden">
                         {{-- Logika Gambar: Gunakan file() method dari Fileable trait --}}
-                        <img src="{{ $item->file('gambar')->hasFile() ? $item->file('gambar')->preview() : 'https://via.placeholder.com/300?text=No+Image' }}"
+                        <img src="{{ $item->file('gambar')->hasFile() ? $item->file('gambar')->preview() : Vite::asset('resources/assets/photos/bakpia.jpg') }}"
                             alt="{{ $item->nama_barang }}"
                             class="w-full h-full object-cover group-hover:scale-110 transition duration-500">
 
