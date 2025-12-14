@@ -29,6 +29,17 @@ class DatabaseSeeder extends Seeder
             'status' => 'on',
         ]);
 
+        // Create Buyer user
+        \App\Models\User::factory()->create([
+            'name' => 'Buyer',
+            'email' => 'rafisaifullah.u@gmail.com',
+            'password' => bcrypt('123'),
+            'role' => 'buyer',
+            'alamat' => 'Jl. Buyer',
+            'no_hp' => '08123456789',
+            'status' => 'on',
+        ]);
+
         // Create 1000 regular users
         \App\Models\User::factory(1000)->create();
 
