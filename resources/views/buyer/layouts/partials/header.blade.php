@@ -57,9 +57,10 @@
 
             @php
                 use App\Models\Pesanan;
+                // Query cart: same as check_out page (keranjang OR pending_payment)
                 $user_cart = Auth::check()
                     ? Pesanan::where('user_id', Auth::id())
-                        ->where('status', 'keranjang')
+                        ->whereIn('status', ['keranjang', 'pending_payment'])
                         ->first()
                     : null;
                 $cart_count = $user_cart ? $user_cart->getItemCount() : 0;

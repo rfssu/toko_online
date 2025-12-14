@@ -11,6 +11,7 @@ use App\Http\Controllers\BarangController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\PesananController;
+use App\Http\Controllers\PaymentController;
 
 /*
 |--------------------------------------------------------------------------
@@ -51,6 +52,11 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/pesanan/{id}/delete', [PesanController::class, 'delete'])->name('pesanan.delete');
     // BUYER - Order History
     Route::get('/history', [HistoryController::class, 'index'])->name('history');
+    Route::get('/history/{id}', [HistoryController::class, 'detail'])->name('history.detail');
+
+    // PAYMENT - Midtrans Integration
+    Route::get('/payment/{pesanan_id}', [PaymentController::class, 'index'])->name('payment.index');
+    Route::get('/payment/{pesanan_id}/status', [PaymentController::class, 'checkStatus'])->name('payment.status');
     Route::middleware(['role:admin,seller'])->group(function () {
         Route::get('dashboard', function () {
             return view('seller/pages/dashboard');
@@ -62,3 +68,6 @@ Route::middleware(['auth'])->group(function () {
         Route::resource('pesanans', PesananController::class);
     });
 });
+
+// Midtrans Notification (outside auth - accessed by Midtrans server)
+Route::post('/payment/notification', [PaymentController::class, 'notification'])->name('payment.notification');

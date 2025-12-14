@@ -102,14 +102,12 @@
                                 </p>
                             </div>
 
-                            <form id="checkoutForm" action="{{ route('pesanan.konfirmasi') }}" method="POST">
-                                @csrf
-                                <button type="button" onclick="confirmCheckout()"
-                                    class="btn bg-amber-600 hover:bg-amber-700 text-white w-full border-none">
-                                    <i class="fa-solid fa-check-circle"></i>
-                                    Konfirmasi Pesanan
-                                </button>
-                            </form>
+                            {{-- Bayar Sekarang Button --}}
+                            <button type="button" onclick="confirmCheckout()"
+                                class="btn bg-amber-600 hover:bg-amber-700 text-white w-full border-none">
+                                <i class="fa-solid fa-credit-card"></i>
+                                Bayar Sekarang
+                            </button>
 
                             <a href="{{ route('produk') }}" class="btn btn-ghost w-full mt-2">
                                 <i class="fa-solid fa-arrow-left"></i>
@@ -136,6 +134,14 @@
         @endif
     </div>
 
+    {{-- Midtrans Snap Script --}}
+    @if(config('midtrans.is_production'))
+        <script src="https://app.midtrans.com/snap/snap.js" data-client-key="{{ config('midtrans.client_key') }}"></script>
+    @else
+        <script src="https://app.sandbox.midtrans.com/snap/snap.js"
+            data-client-key="{{ config('midtrans.client_key') }}"></script>
+    @endif
+
     <script>
         // SweetAlert for Delete Confirmation
         function confirmDelete(url) {
@@ -156,21 +162,96 @@
             });
         }
 
-        // SweetAlert for Checkout Confirmation
+        // Checkout with Midtrans Snap
         function confirmCheckout() {
             Swal.fire({
-                title: 'Konfirmasi Pesanan?',
-                html: 'Pastikan data Anda sudah lengkap.<br>Pesanan akan diproses setelah konfirmasi.',
+                title: 'Konfirmasi Pesanan',
+                text: 'Anda akan melanjutkan ke pembayaran',
                 icon: 'question',
                 showCancelButton: true,
                 confirmButtonColor: '#d97706',
                 cancelButtonColor: '#6b7280',
-                confirmButtonText: '<i class="fa-solid fa-check"></i> Ya, Konfirmasi',
-                cancelButtonText: 'Batal',
-                reverseButtons: true
+                confirmButtonText: 'Ya, Lanjutkan',
+                cancelButtonText: 'Batal'
             }).then((result) => {
                 if (result.isConfirmed) {
-                    document.getElementById('checkoutForm').submit();
+                    // Show loading
+                    Swal.fire({
+                        title: 'Memproses...',
+                        text: 'Membuat token pembayaran',
+                        allowOutsideClick: false,
+                        didOpen: () => {
+                            Swal.showLoading();
+                        }
+                    });
+
+                    // AJAX to konfirmasi and get snap token
+                    fetch('{{ route("pesanan.konfirmasi") }}', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                            'X-Requested-With': 'XMLHttpRequest'
+                        }
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            console.log('Konfirmasi Response:', data);
+
+                            if (data.success && data.snap_token) {
+                                Swal.close();
+
+                                // Trigger Snap popup
+                                snap.pay(data.snap_token, {
+                                    onSuccess: function (result) {
+                                        console.log('Payment Success:', result);
+                                        Swal.fire({
+                                            icon: 'success',
+                                            title: 'Pembayaran Berhasil!',
+                                            text: 'Pesanan Anda sedang diproses',
+                                            confirmButtonText: 'Lihat Pesanan'
+                                        }).then(() => {
+                                            window.location.href = '{{ route("history") }}';
+                                        });
+                                    },
+                                    onPending: function (result) {
+                                        console.log('Payment Pending:', result);
+                                        Swal.fire({
+                                            icon: 'info',
+                                            title: 'Pembayaran Pending',
+                                            text: 'Menunggu konfirmasi pembayaran',
+                                        }).then(() => {
+                                            window.location.href = '{{ route("history") }}';
+                                        });
+                                    },
+                                    onError: function (result) {
+                                        console.log('Payment Error:', result);
+                                        Swal.fire({
+                                            icon: 'error',
+                                            title: 'Pembayaran Gagal',
+                                            text: 'Terjadi kesalahan, silahkan coba lagi',
+                                        });
+                                    },
+                                    onClose: function () {
+                                        console.log('Payment Popup Closed');
+                                    }
+                                });
+                            } else {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Gagal',
+                                    text: data.message || 'Gagal membuat token pembayaran',
+                                });
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: 'Terjadi kesalahan sistem',
+                            });
+                        });
                 }
             });
         }

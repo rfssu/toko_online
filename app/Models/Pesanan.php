@@ -15,9 +15,15 @@ class Pesanan extends Model
         'user_id',
         'tanggal_pickup',
         'status',
+        'snap_token',
+        'payment_type',
     ];
 
     public const STATUS = [
+        'keranjang' => 'Keranjang',
+        'pending_payment' => 'Menunggu Pembayaran',
+        'checkout' => 'Sudah Dibayar',
+        'siap_pickup' => 'Siap Pickup',
         'co' => 'Check Out',
         'pickup' => 'Pickup',
     ];
@@ -40,7 +46,7 @@ class Pesanan extends Model
 
     public function getStatusValAttribute()
     {
-        return self::STATUS[$this->status];
+        return self::STATUS[$this->status] ?? ucfirst($this->status);
     }
 
     public function getTotalAttribute()

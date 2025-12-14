@@ -48,8 +48,7 @@ class PesanController extends Controller
                     'status' => 'keranjang'
                 ],
                 [
-                    'tanggal' => now(),
-                    'kode' => mt_rand(100, 999)
+                    'kode' => mt_rand(100000, 999999)
                 ]
             );
             // Check if item already in cart
@@ -143,14 +142,30 @@ class PesanController extends Controller
 
     public function check_out()
     {
+        // Query cart: keranjang OR pending_payment (waiting for payment)
         $pesanan = Pesanan::where('user_id', Auth::user()->id)
-            ->where('status', 'keranjang')
+            ->whereIn('status', ['keranjang', 'pending_payment'])
             ->first();
+
+        // DEBUG: Log what we found
+        \Log::info('Checkout Debug', [
+            'user_id' => Auth::user()->id,
+            'pesanan_found' => $pesanan ? true : false,
+            'pesanan_id' => $pesanan ? $pesanan->id : null,
+            'pesanan_status' => $pesanan ? $pesanan->status : null,
+        ]);
 
         $pesanan_details = [];
         if ($pesanan) {
             $pesanan_details = PesananDetail::where('pesanan_id', $pesanan->id)->get();
+
+            // DEBUG: Log details
+            \Log::info('Checkout Details', [
+                'pesanan_detail_count' => $pesanan_details->count(),
+                'details' => $pesanan_details->pluck('id', 'barang_id')->toArray()
+            ]);
         }
+
         return view('pesan.keranjang', compact('pesanan', 'pesanan_details'));
     }
 
@@ -165,34 +180,118 @@ class PesanController extends Controller
         return redirect('check-out');
     }
 
-    public function konfirmasi()
+    public function konfirmasi(Request $request)
     {
         $user = User::where('id', Auth::user()->id)->first();
 
         // Validasi user profile
         if (empty($user->alamat) || empty($user->no_hp)) {
+            if ($request->ajax()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Silahkan lengkapi profil Anda terlebih dahulu'
+                ], 400);
+            }
             Alert::error('Silahkan lengkapi profil Anda terlebih dahulu', 'Error');
             return redirect('profile');
         }
+
         $pesanan = Pesanan::where('user_id', Auth::user()->id)
             ->where('status', 'keranjang')
             ->first();
+
         if (!$pesanan) {
+            if ($request->ajax()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Keranjang kosong'
+                ], 400);
+            }
             Alert::error('Keranjang kosong', 'Error');
             return redirect('/');
         }
-        // Update status ke checkout
-        $pesanan->status = 'checkout';
-        $pesanan->save();
-        // Kurangi stok
-        $pesanan_details = PesananDetail::where('pesanan_id', $pesanan->id)->get();
-        foreach ($pesanan_details as $detail) {
-            $barang = Barang::find($detail->barang_id);
-            $barang->stok -= $detail->jumlah;
-            $barang->save();
-        }
-        Alert::success('Pesanan berhasil dikonfirmasi! Silahkan tunggu pemberitahuan siap pickup', 'Success');
 
-        return redirect()->route('history');
+        // Update status ke pending_payment
+        $pesanan->status = 'pending_payment';
+        $pesanan->save();
+
+        // Create Midtrans Snap token
+        try {
+            $midtransService = new \App\Services\MidtransService();
+
+            // Build transaction params
+            $itemDetails = [];
+            foreach ($pesanan->pesanan_detail as $detail) {
+                $itemDetails[] = [
+                    'id' => $detail->barang->id,
+                    'price' => $detail->barang->harga,
+                    'quantity' => $detail->jumlah,
+                    'name' => $detail->barang->nama_barang,
+                ];
+            }
+
+            $params = [
+                'transaction_details' => [
+                    'order_id' => $pesanan->kode,
+                    'gross_amount' => $pesanan->total,
+                ],
+                'item_details' => $itemDetails,
+                'customer_details' => [
+                    'first_name' => $pesanan->user->name,
+                    'email' => $pesanan->user->email,
+                    'phone' => $pesanan->user->no_hp ?? '08123456789',
+                ],
+            ];
+
+            $result = $midtransService->createTransaction($params);
+
+            if (!$result['success']) {
+                \Log::error('Snap Token Creation Failed', ['message' => $result['message']]);
+
+                if ($request->ajax()) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Gagal membuat token pembayaran: ' . $result['message']
+                    ], 500);
+                }
+
+                Alert::error('Gagal membuat token pembayaran', 'Error');
+                return redirect()->route('checkout');
+            }
+
+            // Save snap token
+            $pesanan->snap_token = $result['snap_token'];
+            $pesanan->save();
+
+            \Log::info('Snap Token Created', [
+                'pesanan_id' => $pesanan->id,
+                'token_length' => strlen($result['snap_token'])
+            ]);
+
+            // Return AJAX response with snap token
+            if ($request->ajax()) {
+                return response()->json([
+                    'success' => true,
+                    'snap_token' => $result['snap_token'],
+                    'client_key' => $midtransService->getClientKey(),
+                ]);
+            }
+
+            // Fallback redirect (shouldn't happen)
+            return redirect()->route('payment.index', $pesanan->id);
+
+        } catch (\Exception $e) {
+            \Log::error('Konfirmasi Exception', ['error' => $e->getMessage()]);
+
+            if ($request->ajax()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Terjadi kesalahan: ' . $e->getMessage()
+                ], 500);
+            }
+
+            Alert::error('Terjadi kesalahan sistem', 'Error');
+            return redirect()->route('checkout');
+        }
     }
 }

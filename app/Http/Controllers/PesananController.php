@@ -19,8 +19,12 @@ class PesananController extends Controller
     }
     public function index(Request $request)
     {
+        // Filter: Seller hanya lihat pesanan yang SUDAH DIBAYAR
         $query = Pesanan::query()
-            ->select('pesanans.*')->join('users', 'pesanans.user_id', '=', 'users.id');
+            ->select('pesanans.*')
+            ->join('users', 'pesanans.user_id', '=', 'users.id')
+            ->whereIn('pesanans.status', ['checkout', 'siap_pickup', 'co', 'pickup']);  // Exclude pending_payment
+
         $models = QuerySearch::apply(
             query: $query,
             request: $request,
