@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\AutoFill;
 use Illuminate\Http\Request;
 use App\Models\Barang;
 use App\Models\Pesanan;
@@ -13,9 +14,14 @@ use App\Models\User;
 
 class PesanController extends Controller
 {
+    public $user;
+
     public function __construct()
     {
-        $this->middleware('auth');
+        $this->middleware(function ($request, $next) {
+            $this->user = Auth::user();
+            return $next($request);
+        });
     }
 
     public function index($id)
@@ -27,59 +33,24 @@ class PesanController extends Controller
 
     public function addToCartAjax(Request $request)
     {
-        try {
-            $request->validate([
-                'barang_id' => 'required|exists:barangs,id',
-                'jumlah' => 'integer|min:1'
-            ]);
-            $barang = Barang::findOrFail($request->barang_id);
-            $jumlah = $request->jumlah ?? 1;
-            // Validasi stok
-            if ($jumlah > $barang->stok) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Stok tidak mencukupi'
-                ], 400);
-            }
-            // Get or create keranjang (status='keranjang')
-            $pesanan = Pesanan::firstOrCreate(
-                [
-                    'user_id' => Auth::id(),
-                    'status' => 'keranjang'
-                ],
-                [
-                    'kode' => mt_rand(100000, 999999)
-                ]
-            );
-            // Check if item already in cart
-            $pesananDetail = PesananDetail::where('pesanan_id', $pesanan->id)
-                ->where('barang_id', $barang->id)
-                ->first();
-            if ($pesananDetail) {
-                // Update quantity (harga sudah tersimpan, hanya update jumlah)
-                $pesananDetail->jumlah += $jumlah;
-                $pesananDetail->save();
-            } else {
-                // Create new item (simpan harga per unit)
-                PesananDetail::create([
-                    'pesanan_id' => $pesanan->id,
-                    'barang_id' => $barang->id,
-                    'jumlah' => $jumlah,
-                    'harga' => $barang->harga
-                ]);
-            }
-            // Total akan di-calculate otomatis via getTotalAttribute()
-            return response()->json([
-                'success' => true,
-                'message' => 'Produk berhasil ditambahkan ke keranjang',
-                'cart_count' => $pesanan->getItemCount(),
-                'cart_total' => $pesanan->total  // Use attribute instead
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Terjadi kesalahan: ' . $e->getMessage()
-            ], 500);
+        $params = $request->all();
+        $params['user_id'] = $this->user->id;
+
+        $model = PesananDetail::where('barang_id', $params['barang_id'])
+            ->where('user_id', $params['user_id'])
+            ->whereNull('pesanan_id')->first() ?? new PesananDetail;
+
+        if ($model->id) {
+            $params['jumlah'] += $model->jumlah;
+        }
+
+        if (empty($params['jumlah'])) {
+            $model->delete();
+            return redirect()->back()->with('success', 'Barang berhasil diupdate!');
+        } else {
+            AutoFill::fill($model, params: $params);
+            $model->saveOrFail();
+            return redirect()->back()->with('success', 'Barang berhasil diupdate!');
         }
     }
 
@@ -142,36 +113,15 @@ class PesanController extends Controller
 
     public function check_out()
     {
-        // Query cart: keranjang OR pending_payment (waiting for payment)
-        $pesanan = Pesanan::where('user_id', Auth::user()->id)
-            ->whereIn('status', ['keranjang', 'pending_payment'])
-            ->first();
+        $pesanan_details = $this->user->barang_keranjang;
+        $user = $this->user;
 
-        // DEBUG: Log what we found
-        \Log::info('Checkout Debug', [
-            'user_id' => Auth::user()->id,
-            'pesanan_found' => $pesanan ? true : false,
-            'pesanan_id' => $pesanan ? $pesanan->id : null,
-            'pesanan_status' => $pesanan ? $pesanan->status : null,
-        ]);
-
-        $pesanan_details = [];
-        if ($pesanan) {
-            $pesanan_details = PesananDetail::where('pesanan_id', $pesanan->id)->get();
-
-            // DEBUG: Log details
-            \Log::info('Checkout Details', [
-                'pesanan_detail_count' => $pesanan_details->count(),
-                'details' => $pesanan_details->pluck('id', 'barang_id')->toArray()
-            ]);
-        }
-
-        return view('pesan.keranjang', compact('pesanan', 'pesanan_details'));
+        return view('pesan.keranjang', get_defined_vars());
     }
 
     public function delete($id)
     {
-        $pesanan_detail = PesananDetail::where('id', $id)->first();
+        $pesanan_detail = PesananDetail::where('id', $id)->first() ?? null;
 
         // Delete item (total will be recalculated automatically)
         $pesanan_detail->delete();
@@ -279,7 +229,6 @@ class PesanController extends Controller
 
             // Fallback redirect (shouldn't happen)
             return redirect()->route('payment.index', $pesanan->id);
-
         } catch (\Exception $e) {
             \Log::error('Konfirmasi Exception', ['error' => $e->getMessage()]);
 

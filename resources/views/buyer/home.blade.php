@@ -65,7 +65,7 @@
 
                     {{-- Gambar Produk --}}
                     <div class="relative aspect-square bg-gray-100 rounded-lg mb-3 overflow-hidden">
-                        <img src="{{ $item->file('gambar')->hasFile() ? $item->file('gambar')->preview() : 'https://via.placeholder.com/300?text=No+Image' }}"
+                        <img src="{{ $item->file('gambar')->hasFile() ? $item->file('gambar')->preview() : Vite::asset('resources/assets/photos/bakpia.jpg') }}"
                             alt="{{ $item->nama_barang }}"
                             class="w-full h-full object-cover group-hover:scale-110 transition duration-500">
 
@@ -96,7 +96,7 @@
                         </div>
 
                         {{-- Button Add --}}
-                        <button onclick="addToCart({{ $item->id }}, '{{ $item->nama_barang }}')"
+                        <button onclick="addToCart({{ $item->id }})"
                             class="bg-gray-900 text-white w-8 h-8 md:w-10 md:h-10 rounded-full flex items-center justify-center hover:bg-amber-600 transition shadow-lg transform active:scale-90">
                             <i class="fa-solid fa-cart-plus"></i>
                         </button>
@@ -126,7 +126,7 @@
                     {{-- Gambar Produk --}}
                     <div class="relative aspect-square bg-gray-100 rounded-lg mb-3 overflow-hidden">
                         {{-- Logika Gambar: Gunakan file() method dari Fileable trait --}}
-                        <img src="{{ $item->file('gambar')->hasFile() ? $item->file('gambar')->preview() : 'https://via.placeholder.com/300?text=No+Image' }}"
+                        <img src="{{ $item->file('gambar')->hasFile() ? $item->file('gambar')->preview() : Vite::asset('resources/assets/photos/bakpia.jpg') }}"
                             alt="{{ $item->nama_barang }}"
                             class="w-full h-full object-cover group-hover:scale-110 transition duration-500">
 
@@ -158,7 +158,7 @@
                         </div>
 
                         {{-- Button Add --}}
-                        <button onclick="addToCart({{ $item->id }}, '{{ $item->nama_barang }}')"
+                        <button onclick="addToCart({{ $item->id }})"
                             class="bg-gray-900 text-white w-8 h-8 md:w-10 md:h-10 rounded-full flex items-center justify-center hover:bg-amber-600 transition shadow-lg transform active:scale-90">
                             <i class="fa-solid fa-cart-plus"></i>
                         </button>
