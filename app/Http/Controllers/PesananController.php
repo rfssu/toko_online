@@ -26,8 +26,8 @@ class PesananController extends Controller
         // Filter: Seller hanya lihat pesanan yang SUDAH DIBAYAR
         $query = Pesanan::query()
             ->select('pesanans.*')
-            ->join('users', 'pesanans.user_id', '=', 'users.id')
-            ->join('users as pic', 'pesanans.pic', '=', 'pic.id')
+            ->leftJoin('users', 'pesanans.user_id', '=', 'users.id')
+            ->leftJoin('users as pic', 'pesanans.pic', '=', 'pic.id')
             ->whereIn('pesanans.status', ['co', 'pickup']);  // Exclude pending_payment
 
         $models = QuerySearch::apply(

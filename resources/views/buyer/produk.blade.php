@@ -17,7 +17,8 @@
     <div class="bg-gradient-to-br from-amber-50 via-orange-50 to-amber-100">
         <div class="container mx-auto px-4 md:px-8 py-8 md:py-12">
             <div class="text-center">
-                <span class="bg-amber-600 text-white text-xs font-bold px-4 py-1.5 rounded-full mb-4 inline-block shadow-lg">
+                <span
+                    class="bg-amber-600 text-white text-xs font-bold px-4 py-1.5 rounded-full mb-4 inline-block shadow-lg">
                     <i class="fa-solid fa-store"></i> Katalog Produk
                 </span>
                 <h1 class="text-3xl md:text-4xl font-bold leading-tight mb-3 text-gray-900">
@@ -39,7 +40,9 @@
                 <div class="w-full md:w-1/2 lg:w-1/3">
                     <form action="{{ route('produk') }}" method="GET">
                         <div class="relative">
-                            <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari produk favorit..." class="input input-bordered w-full rounded-full pl-12 pr-4 focus:outline-none focus:ring-2 focus:ring-amber-500 border-gray-300">
+                            <input type="text" name="search" value="{{ request('search') }}"
+                                placeholder="Cari produk favorit..."
+                                class="input input-bordered w-full rounded-full pl-12 pr-4 focus:outline-none focus:ring-2 focus:ring-amber-500 border-gray-300">
                             <button type="submit" class="absolute left-0 top-0 h-full px-4 hover:text-amber-600 transition">
                                 <i class="fa-solid fa-search text-gray-400"></i>
                             </button>
@@ -51,20 +54,28 @@
 
                 {{-- Filter Buttons --}}
                 <div class="flex flex-wrap gap-2">
-                    <a href="{{ route('produk', ['filter' => 'popular', 'search' => request('search')]) }}" class="btn btn-sm {{ (request('filter') ?? '') == 'popular' ? 'bg-amber-600 text-white hover:bg-amber-700' : 'bg-white hover:bg-amber-50 text-gray-700' }} border-gray-300 rounded-full">
-                        <i class="fa-solid fa-fire {{ (request('filter') ?? '') == 'popular' ? 'text-white' : 'text-amber-600' }}"></i>
+                    <a href="{{ route('produk', ['filter' => 'popular', 'search' => request('search')]) }}"
+                        class="btn btn-sm {{ (request('filter') ?? '') == 'popular' ? 'bg-amber-600 text-white hover:bg-amber-700' : 'bg-white hover:bg-amber-50 text-gray-700' }} border-gray-300 rounded-full">
+                        <i
+                            class="fa-solid fa-fire {{ (request('filter') ?? '') == 'popular' ? 'text-white' : 'text-amber-600' }}"></i>
                         Terpopuler
                     </a>
-                    <a href="{{ route('produk', ['filter' => 'price_low', 'search' => request('search')]) }}" class="btn btn-sm {{ (request('filter') ?? '') == 'price_low' ? 'bg-green-600 text-white hover:bg-green-700' : 'bg-white hover:bg-green-50 text-gray-700' }} border-gray-300 rounded-full">
-                        <i class="fa-solid fa-arrow-down-1-9 {{ (request('filter') ?? '') == 'price_low' ? 'text-white' : 'text-green-600' }}"></i>
+                    <a href="{{ route('produk', ['filter' => 'price_low', 'search' => request('search')]) }}"
+                        class="btn btn-sm {{ (request('filter') ?? '') == 'price_low' ? 'bg-green-600 text-white hover:bg-green-700' : 'bg-white hover:bg-green-50 text-gray-700' }} border-gray-300 rounded-full">
+                        <i
+                            class="fa-solid fa-arrow-down-1-9 {{ (request('filter') ?? '') == 'price_low' ? 'text-white' : 'text-green-600' }}"></i>
                         Harga Terendah
                     </a>
-                    <a href="{{ route('produk', ['filter' => 'price_high', 'search' => request('search')]) }}" class="btn btn-sm {{ (request('filter') ?? '') == 'price_high' ? 'bg-red-600 text-white hover:bg-red-700' : 'bg-white hover:bg-red-50 text-gray-700' }} border-gray-300 rounded-full">
-                        <i class="fa-solid fa-arrow-up-9-1 {{ (request('filter') ?? '') == 'price_high' ? 'text-white' : 'text-red-600' }}"></i>
+                    <a href="{{ route('produk', ['filter' => 'price_high', 'search' => request('search')]) }}"
+                        class="btn btn-sm {{ (request('filter') ?? '') == 'price_high' ? 'bg-red-600 text-white hover:bg-red-700' : 'bg-white hover:bg-red-50 text-gray-700' }} border-gray-300 rounded-full">
+                        <i
+                            class="fa-solid fa-arrow-up-9-1 {{ (request('filter') ?? '') == 'price_high' ? 'text-white' : 'text-red-600' }}"></i>
                         Harga Tertinggi
                     </a>
-                    <a href="{{ route('produk', ['filter' => 'newest', 'search' => request('search')]) }}" class="btn btn-sm {{ (request('filter') ?? '') == 'newest' ? 'bg-blue-600 text-white hover:bg-blue-700' : 'bg-white hover:bg-blue-50 text-gray-700' }} border-gray-300 rounded-full">
-                        <i class="fa-solid fa-clock {{ (request('filter') ?? '') == 'newest' ? 'text-white' : 'text-blue-600' }}"></i>
+                    <a href="{{ route('produk', ['filter' => 'newest', 'search' => request('search')]) }}"
+                        class="btn btn-sm {{ (request('filter') ?? '') == 'newest' ? 'bg-blue-600 text-white hover:bg-blue-700' : 'bg-white hover:bg-blue-50 text-gray-700' }} border-gray-300 rounded-full">
+                        <i
+                            class="fa-solid fa-clock {{ (request('filter') ?? '') == 'newest' ? 'text-white' : 'text-blue-600' }}"></i>
                         Terbaru
                     </a>
                 </div>
@@ -103,40 +114,37 @@
 
             {{-- LOOPING DATA BARANG --}}
             @forelse($models as $item)
-                <div class="group bg-white border border-gray-100 rounded-xl p-3 md:p-4 shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+                <div
+                    class="group bg-white border border-gray-100 rounded-xl p-3 md:p-4 shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
 
                     {{-- Gambar Produk --}}
                     <div class="relative aspect-square bg-gray-100 rounded-lg mb-3 overflow-hidden">
-                        <img src="{{ $item->file('gambar')->hasFile() ? $item->file('gambar')->preview() : Vite::asset('resources/assets/photos/bakpia.jpg') }}" alt="{{ $item->nama_barang }}" class="w-full h-full object-cover group-hover:scale-110 transition duration-500">
+                        <img src="{{ $item->file('gambar')->hasFile() ? $item->file('gambar')->preview() : Vite::asset('resources/assets/photos/bakpia.jpg') }}"
+                            alt="{{ $item->nama_barang }}"
+                            class="w-full h-full object-cover group-hover:scale-110 transition duration-500">
                         @if ($item->stok_ready < 1)
-                            <span class="absolute top-2 right-2 bg-gray-500 text-white text-[10px] font-bold px-2 py-1 rounded shadow">HABIS</span>
+                            <span
+                                class="absolute top-2 right-2 bg-gray-500 text-white text-[10px] font-bold px-2 py-1 rounded shadow">HABIS</span>
                         @elseif($item->stok_ready < 5)
-                            <span class="absolute top-2 right-2 bg-red-500 text-white text-[10px] font-bold px-2 py-1 rounded shadow">HAMPIR HABIS</span>
+                            <span
+                                class="absolute top-2 right-2 bg-red-500 text-white text-[10px] font-bold px-2 py-1 rounded shadow">HAMPIR
+                                HABIS</span>
                         @endif
 
-
-
-                        {{-- Quick Action Buttons --}}
-                        <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition duration-300 flex items-center justify-center gap-2 opacity-0 group-hover:opacity-100">
-                            <button class="btn btn-sm btn-circle bg-white text-gray-900 border-none hover:bg-amber-600 hover:text-white shadow-lg transform scale-90 hover:scale-100 transition">
-                                <i class="fa-solid fa-eye"></i>
-                            </button>
-                            <button class="btn btn-sm btn-circle bg-white text-gray-900 border-none hover:bg-red-500 hover:text-white shadow-lg transform scale-90 hover:scale-100 transition">
-                                <i class="fa-solid fa-heart"></i>
-                            </button>
-                        </div>
                     </div>
 
 
                     {{-- Nama Produk --}}
-                    <h3 class="font-bold text-gray-800 text-sm md:text-base mb-1 line-clamp-2 min-h-[2.5rem]" title="{{ $item->nama_barang }}">
+                    <h3 class="font-bold text-gray-800 text-sm md:text-base mb-1 line-clamp-2 min-h-[2.5rem]"
+                        title="{{ $item->nama_barang }}">
                         {{ $item->nama_barang }}
                     </h3>
 
                     {{-- Keterangan Produk --}}
                     @if ($item->keterangan)
                         <div class="mb-2">
-                            <span class="text-[10px] md:text-xs text-gray-600 font-medium bg-gray-50 px-2 py-0.5 rounded border border-gray-200">
+                            <span
+                                class="text-[10px] md:text-xs text-gray-600 font-medium bg-gray-50 px-2 py-0.5 rounded border border-gray-200">
                                 {{ $item->keterangan }}
                             </span>
                         </div>
@@ -155,11 +163,13 @@
 
                         {{-- Button Add to Cart --}}
                         @if ($item->stok_ready < 1)
-                            <button disabled class="bg-gray-300 text-gray-500 w-8 h-8 md:w-10 md:h-10 rounded-full flex items-center justify-center cursor-not-allowed">
+                            <button disabled
+                                class="bg-gray-300 text-gray-500 w-8 h-8 md:w-10 md:h-10 rounded-full flex items-center justify-center cursor-not-allowed">
                                 <i class="fa-solid fa-ban"></i>
                             </button>
                         @else
-                            <button onclick="addToCart({{ $item->id }})" class="bg-gray-900 text-white w-8 h-8 md:w-10 md:h-10 rounded-full flex items-center justify-center hover:bg-amber-600 transition shadow-lg transform active:scale-90">
+                            <button onclick="addToCart({{ $item->id }})"
+                                class="bg-gray-900 text-white w-8 h-8 md:w-10 md:h-10 rounded-full flex items-center justify-center hover:bg-amber-600 transition shadow-lg transform active:scale-90">
                                 <i class="fa-solid fa-cart-plus"></i>
                             </button>
                         @endif

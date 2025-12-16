@@ -30,10 +30,7 @@
                     </p>
                     <div class="flex gap-3 justify-center md:justify-start">
                         <button class="btn bg-amber-600 hover:bg-amber-700 text-white border-none rounded-full px-8 shadow-lg shadow-amber-200">
-                            Pesan Sekarang
-                        </button>
-                        <button class="btn bg-white text-gray-700 hover:bg-gray-50 border-gray-300 rounded-full px-6">
-                            Lihat Menu
+                            Belanja Sekarang
                         </button>
                     </div>
                 </div>
@@ -72,18 +69,22 @@
                         @endif
                     </div>
 
-                    {{-- Badge Info --}}
-                    <div class="mb-1">
-                        <span class="text-[10px] md:text-xs text-green-600 font-bold bg-green-50 px-2 py-0.5 rounded border border-green-100">
-                            {{ $item->keterangan ?? 'Tahan 7 Hari' }}
-                        </span>
-                    </div>
 
 
                     {{-- Nama Produk --}}
                     <h3 class="font-bold text-gray-800 text-sm md:text-base mb-1 line-clamp-1" title="{{ $item->nama_barang }}">
                         {{ $item->nama_barang }}
                     </h3>
+
+                    {{-- Keterangan Produk --}}
+                    @if($item->keterangan)
+                        <div class="mb-2">
+                            <span
+                                class="text-[10px] md:text-xs text-gray-600 font-medium bg-gray-50 px-2 py-0.5 rounded border border-gray-200">
+                                {{ $item->keterangan }}
+                            </span>
+                        </div>
+                    @endif
 
                     {{-- Harga & Button --}}
                     <div class="flex justify-between items-end mt-2">
