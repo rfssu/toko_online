@@ -21,6 +21,8 @@
             &copy; {{ date('Y') }} Toko Oleh-Oleh
         </div>
     </div>
+    @include('seller/components/alert')
+
 
 </body>
 </html>

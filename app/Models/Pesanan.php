@@ -17,6 +17,7 @@ class Pesanan extends Model
         'status',
         'snap_token',
         'payment_type',
+        'pic'
     ];
 
     public const STATUS_PENDING = 'pending_payment';
@@ -32,6 +33,10 @@ class Pesanan extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+    public function toPic()
+    {
+        return $this->belongsTo(User::class, 'pic', 'id');
     }
 
     public function pesanan_detail()

@@ -44,13 +44,14 @@
                 <table class="table table-zebra">
                     <!-- head -->
                     <thead>
-                        <tr>    
+                        <tr>
                             <th>No</th>
                             <th>Aksi</th>
                             <x-sort-th column="pesanans.kode" label="Kode" />
                             <x-sort-th column="users.name" label="Nama Pembeli" />
                             <x-sort-th column="pesanans.status" label="Status" />
                             <x-sort-th column="users.no_hp" label="No HP" />
+                            <th>PIC</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -72,6 +73,7 @@
                                 <td>{{ $model->user->name }}</td>
                                 <td>{{ $model->status_val }}</td>
                                 <td>{{ $model->user->no_hp }}</td>
+                                <td>{{ $model->toPic->name ?? '-' }}</td>
                             </tr>
                         @empty
                             <tr>

@@ -17,6 +17,7 @@ return new class extends Migration
             $table->integer('user_id')->nullable();
             $table->timestamp('tanggal_pickup')->nullable();
             $table->string('status')->nullable();
+            $table->integer('pic')->nullable();
             $table->timestamps();
         });
     }

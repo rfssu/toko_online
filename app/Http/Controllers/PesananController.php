@@ -13,9 +13,13 @@ class PesananController extends Controller
 {
     use CrudTrait;
     public $user;
+
     public function __construct()
     {
-        $this->user = Auth::user();
+        $this->middleware(function ($request, $next) {
+            $this->user = Auth::user();
+            return $next($request);
+        });
     }
     public function index(Request $request)
     {
@@ -23,12 +27,13 @@ class PesananController extends Controller
         $query = Pesanan::query()
             ->select('pesanans.*')
             ->join('users', 'pesanans.user_id', '=', 'users.id')
-            ->whereIn('pesanans.status', ['checkout', 'siap_pickup', 'co', 'pickup']);  // Exclude pending_payment
+            ->join('users as pic', 'pesanans.pic', '=', 'pic.id')
+            ->whereIn('pesanans.status', ['co', 'pickup']);  // Exclude pending_payment
 
         $models = QuerySearch::apply(
             query: $query,
             request: $request,
-            searchableColumns: ['pesanans.kode', 'users.name', 'users.no_hp', 'pesanans.status'],
+            searchableColumns: ['pesanans.kode', 'users.name', 'users.no_hp', 'pesanans.status', 'pic.name'],
             filterableColumns: ['status' => 'pesanans.status'],
             perPage: 10,
             defaultSort: [
@@ -57,6 +62,7 @@ class PesananController extends Controller
         }
         $model->status = 'pickup';
         $model->tanggal_pickup = now();
+        $model->pic = $this->user->id;
         $model->saveOrFail();
         return redirect()->back()->with('success', 'Pesanan berhasil dikonfirmasi!');
     }

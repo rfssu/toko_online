@@ -17,6 +17,14 @@ class UsersRole
             return redirect()->route('login');
         }
 
+        if ($user->status === 'off') {
+            Auth::logout();
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+
+            return redirect()->route('login');
+        }
+
         if (in_array($user->role, $roles)) {
             return $next($request);
         }
