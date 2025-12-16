@@ -41,19 +41,21 @@ class DatabaseSeeder extends Seeder
         ]);
 
         // Create 1000 regular users
-        \App\Models\User::factory(1000)->create();
+        \App\Models\User::factory(200)->create();
 
         // Create barang
         \App\Models\Barang::factory(200)->create();
 
-        // Create pesanan dengan status acak antara 'co' dan 'pickup'
-        \App\Models\Pesanan::factory(500)->create();
+        \App\Models\Barang::factory(200)->create();
+
+        // // Create pesanan dengan status acak antara 'co' dan 'pickup'
+        // \App\Models\Pesanan::factory(500)->create();
 
 
-        // Create pesanan detail dengan pesanan_id (yang sudah terhubung ke pesanan)
-        \App\Models\PesananDetail::factory(1000)->create();
+        // // Create pesanan detail dengan pesanan_id (yang sudah terhubung ke pesanan)
+        // \App\Models\PesananDetail::factory(1000)->create();
 
-        // Create pesanan detail tanpa pesanan_id (null)
-        \App\Models\PesananDetail::factory(200)->withoutPesanan()->create();
+        // // Create pesanan detail tanpa pesanan_id (null)
+        // \App\Models\PesananDetail::factory(200)->withoutPesanan()->create();
     }
 }
