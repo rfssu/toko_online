@@ -23,33 +23,35 @@
             <form method="GET" action="{{ $indexRoute() }}" class="mb-4">
                 <div class="flex flex-col sm:flex-row gap-2 w-full justify-between">
                     <div class="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
-                        <a href="{{ $createRoute() }}" onclick="modalFormAjax(this, event)" class="btn btn-primary w-full sm:w-auto">
-                            <i class="ri-add-line mr-2"></i>
-                            Tambah Barang
-                        </a>
+                        @if (Auth::user()->role === 'admin')
+                            <a href="{{ $createRoute() }}" onclick="modalFormAjax(this, event)" class="btn btn-primary w-full sm:w-auto">
+                                <i class="ri-add-line mr-2"></i>
+                                Tambah Barang
+                            </a>
 
-                        <!-- Import Dropdown -->
-                        <div class="dropdown dropdown-end w-full sm:w-auto">
-                            <label tabindex="0" class="btn btn-primary w-full sm:w-auto">
-                                <i class="ri-upload-line"></i>
-                                Import
-                                <i class="ri-arrow-down-s-line"></i>
-                            </label>
-                            <ul tabindex="0" class="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-64 mt-2">
-                                <li>
-                                    <a href="{{ route('barangs.template') }}" class="gap-2">
-                                        <i class="ri-file-excel-line text-green-600"></i>
-                                        <span>Download Template</span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a onclick="document.getElementById('import_modal').showModal()" class="gap-2">
-                                        <i class="ri-upload-cloud-line text-blue-600"></i>
-                                        <span>Upload File Import</span>
-                                    </a>
-                                </li>
-                            </ul>
-                        </div>
+                            <!-- Import Dropdown -->
+                            <div class="dropdown dropdown-end w-full sm:w-auto">
+                                <label tabindex="0" class="btn btn-primary w-full sm:w-auto">
+                                    <i class="ri-upload-line"></i>
+                                    Import
+                                    <i class="ri-arrow-down-s-line"></i>
+                                </label>
+                                <ul tabindex="0" class="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-64 mt-2">
+                                    <li>
+                                        <a href="{{ route('barangs.template') }}" class="gap-2">
+                                            <i class="ri-file-excel-line text-green-600"></i>
+                                            <span>Download Template</span>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a onclick="document.getElementById('import_modal').showModal()" class="gap-2">
+                                            <i class="ri-upload-cloud-line text-blue-600"></i>
+                                            <span>Upload File Import</span>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        @endif
                     </div>
                     <div class="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
                         {{ $models->links('seller/components/per-page') }}
@@ -67,7 +69,9 @@
                     <thead>
                         <tr>
                             <th>No</th>
-                            <th>Aksi</th>
+                            @if (Auth::user()->role === 'admin')
+                                <th>Aksi</th>
+                            @endif
                             <th>Nama Barang</th>
                             <th>Gambar</th>
                             <th>Harga</th>
@@ -84,14 +88,16 @@
                         @forelse ($models as $model)
                             <tr>
                                 <td>{{ $no++ }}</td>
-                                <td>
-                                    <a href="{{ $deleteRoute($model) }}" onclick="modalDeleteConfirm(this, event)" data-name="{{ $model->nama_barang }}" class="btn btn-ghost btn-sm">
-                                        <i class="ri-delete-bin-line"></i>
-                                    </a>
-                                    <a href="{{ $editRoute($model) }}" onclick="modalFormAjax(this, event)" class="btn btn-ghost btn-sm">
-                                        <i class="ri-pencil-line"></i>
-                                    </a>
-                                </td>
+                                @if (Auth::user()->role === 'admin')
+                                    <td>
+                                        <a href="{{ $deleteRoute($model) }}" onclick="modalDeleteConfirm(this, event)" data-name="{{ $model->nama_barang }}" class="btn btn-ghost btn-sm">
+                                            <i class="ri-delete-bin-line"></i>
+                                        </a>
+                                        <a href="{{ $editRoute($model) }}" onclick="modalFormAjax(this, event)" class="btn btn-ghost btn-sm">
+                                            <i class="ri-pencil-line"></i>
+                                        </a>
+                                    </td>
+                                @endif
                                 <td>{{ $model->nama_barang }}</td>
                                 <td>
                                     @if ($model->file('gambar')->hasFile())

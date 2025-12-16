@@ -17,8 +17,7 @@
                 <ul class="menu menu-lg gap-2 font-medium pt-4">
                     <!-- Dashboard -->
                     <li>
-                        <a href="{{ route('dashboard') }}"
-                            class="flex gap-4 {{ request()->routeIs('dashboard') ? 'active' : '' }}">
+                        <a href="{{ route('dashboard') }}" class="flex gap-4 {{ request()->routeIs('dashboard') ? 'active' : '' }}">
                             <i class="ri-home-2-line"></i>
                             Dashboard
                         </a>
@@ -28,23 +27,23 @@
                             <span>Menu Utama</span>
                         </h2>
                     </li>
+                    @if (Auth::user()->role === 'admin')
+                        <li>
+                            <a href="{{ route('users.index') }}" class="flex gap-4 {{ request()->routeIs('users.*') ? 'active' : '' }}">
+                                <i class="ri-group-line"></i>
+                                Olah Users
+                            </a>
+                        </li>
+                    @endif
+
                     <li>
-                        <a href="{{ route('users.index') }}"
-                            class="flex gap-4 {{ request()->routeIs('users.*') ? 'active' : '' }}">
-                            <i class="ri-group-line"></i>
-                            Olah Users
-                        </a>
-                    </li>
-                    <li>
-                        <a href="{{ route('barangs.index') }}"
-                            class="flex gap-4 {{ request()->routeIs('barangs.*') ? 'active' : '' }}">
+                        <a href="{{ route('barangs.index') }}" class="flex gap-4 {{ request()->routeIs('barangs.*') ? 'active' : '' }}">
                             <i class="ri-stack-fill"></i>
                             Olah Barang
                         </a>
                     </li>
                     <li>
-                        <a href="{{ route('pesanans.index') }}"
-                            class="flex gap-4 {{ request()->routeIs('pesanans.*') ? 'active' : '' }}">
+                        <a href="{{ route('pesanans.index') }}" class="flex gap-4 {{ request()->routeIs('pesanans.*') ? 'active' : '' }}">
                             <i class="ri-file-list-3-line"></i>
                             Pesanan
                         </a>
@@ -73,19 +72,11 @@
                     <div class="w-10 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2">
                         @php
                             $initials = strtoupper(substr(Auth::user()->name, 0, 2));
-                            $colors = [
-                                'bg-red-500',
-                                'bg-blue-500',
-                                'bg-green-500',
-                                'bg-yellow-500',
-                                'bg-purple-500',
-                                'bg-teal-500',
-                            ];
+                            $colors = ['bg-red-500', 'bg-blue-500', 'bg-green-500', 'bg-yellow-500', 'bg-purple-500', 'bg-teal-500'];
                             $bg = $colors[ord($initials) % count($colors)];
                         @endphp
 
-                        <div
-                            class="w-10 h-10 rounded-full {{ $bg }} flex items-center justify-center text-white font-bold">
+                        <div class="w-10 h-10 rounded-full {{ $bg }} flex items-center justify-center text-white font-bold">
                             {{ $initials }}
                         </div>
                     </div>

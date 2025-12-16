@@ -70,7 +70,8 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/barangs/import', [BarangController::class, 'import'])->name('barangs.import');
 
         // Resource routes
-        Route::resource('users', UserController::class);
+
+        Route::resource('users', UserController::class)->middleware(['role:admin']);
         Route::resource('barangs', BarangController::class);
         Route::resource('pesanans', PesananController::class)->except(['create', 'store', 'destroy']);
     });

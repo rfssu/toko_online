@@ -20,7 +20,9 @@ class UsersRole
         if (in_array($user->role, $roles)) {
             return $next($request);
         }
-
-        return redirect()->route('home');
+        if ($user->role === 'buyer') {
+            return redirect()->route('home');
+        }
+        return redirect()->route('dashboard');
     }
 }
