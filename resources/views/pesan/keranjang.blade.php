@@ -5,11 +5,12 @@
     <div class="bg-gradient-to-br from-amber-50 via-orange-50 to-amber-100">
         <div class="container mx-auto px-4 md:px-8 py-8">
             <div class="text-center">
-                <span class="bg-amber-600 text-white text-xs font-bold px-4 py-1.5 rounded-full mb-4 inline-block shadow-lg">
+                <span
+                    class="bg-amber-600 text-white text-xs font-bold px-4 py-1.5 rounded-full mb-4 inline-block shadow-lg">
                     <i class="fa-solid fa-shopping-cart"></i> Keranjang Belanja
                 </span>
                 <h1 class="text-3xl md:text-4xl font-bold leading-tight mb-3 text-gray-900">
-                    Review <span class="text-amber-600">Pesanan Anda</span>
+                    Keranjang <span class="text-amber-600">Pesanan Anda</span>
                 </h1>
             </div>
         </div>
@@ -34,10 +35,12 @@
                                         <div class="avatar">
                                             <div class="w-20 h-20 rounded-lg">
                                                 @if ($detail->barang->file('gambar')->hasFile())
-                                                    <img src="{{ $detail->barang->file('gambar')->preview() }}" alt="{{ $detail->barang->nama_barang }}" class="object-cover">
+                                                    <img src="{{ $detail->barang->file('gambar')->preview() }}"
+                                                        alt="{{ $detail->barang->nama_barang }}" class="object-cover">
                                                 @else
                                                     <div class="bg-gray-300 w-full h-full flex items-center justify-center">
-                                                        <img src="{{ Vite::asset('resources/assets/photos/bakpia.jpg') }}" alt="{{ $detail->barang->nama_barang }}" class="object-cover">
+                                                        <img src="{{ Vite::asset('resources/assets/photos/bakpia.jpg') }}"
+                                                            alt="{{ $detail->barang->nama_barang }}" class="object-cover">
                                                     </div>
                                                 @endif
                                             </div>
@@ -53,11 +56,13 @@
                                                 Rp {{ number_format($detail->total_keranjang, 0, ',', '.') }}
                                             </p>
                                             <div class="flex items-center">
-                                                <button onclick="addToCart({{ $detail->barang_id }}, -1)" class="btn btn-outline btn-accent btn-xs">
+                                                <button onclick="addToCart({{ $detail->barang_id }}, -1)"
+                                                    class="btn btn-outline btn-accent btn-xs">
                                                     <i class="fa-solid fa-minus"></i>
                                                 </button>
                                                 <span class="text-sm font-semibold w-8 text-center">{{ $detail->jumlah }}</span>
-                                                <button onclick="addToCart({{ $detail->barang_id }})" class="btn btn-outline btn-accent btn-xs">
+                                                <button onclick="addToCart({{ $detail->barang_id }})"
+                                                    class="btn btn-outline btn-accent btn-xs">
                                                     <i class="fa-solid fa-plus"></i>
                                                 </button>
                                             </div>
@@ -65,7 +70,9 @@
 
                                         {{-- Delete Button --}}
                                         <div class="flex items-center">
-                                            <a href="{{ route('pesanan.delete', $detail->id) }}" onclick="event.preventDefault(); confirmDelete(this.href);" class="btn btn-ghost btn-sm btn-circle text-error hover:bg-error hover:text-white">
+                                            <a href="{{ route('pesanan.delete', $detail->id) }}"
+                                                onclick="event.preventDefault(); confirmDelete(this.href);"
+                                                class="btn btn-ghost btn-sm btn-circle text-error hover:bg-error hover:text-white">
                                                 <i class="fa-solid fa-trash"></i>
                                             </a>
                                         </div>
@@ -103,12 +110,14 @@
                             <div class="bg-amber-50 p-3 rounded-lg mb-4">
                                 <p class="text-xs text-gray-700">
                                     <i class="fa-solid fa-info-circle text-amber-600"></i>
-                                    Pesanan akan disiapkan setelah konfirmasi. Ambil di toko setelah status "Siap Pickup".
+                                    Pesanan akan disiapkan setelah pembayaran berhasil. Ambil di toko setelah status "Siap
+                                    Pickup".
                                 </p>
                             </div>
 
                             {{-- Bayar Sekarang Button --}}
-                            <button type="button" onclick="confirmCheckout()" class="btn bg-amber-600 hover:bg-amber-700 text-white w-full border-none">
+                            <button type="button" onclick="confirmCheckout()"
+                                class="btn bg-amber-600 hover:bg-amber-700 text-white w-full border-none">
                                 <i class="fa-solid fa-credit-card"></i>
                                 Bayar Sekarang
                             </button>
@@ -128,7 +137,8 @@
                     <i class="fa-solid fa-cart-shopping text-6xl text-gray-300 mb-4"></i>
                     <h2 class="text-2xl font-bold text-gray-800 mb-2">Keranjang Kosong</h2>
                     <p class="text-gray-600 mb-6">Belum ada produk dalam keranjang Anda</p>
-                    <a href="{{ route('produk') }}" class="btn bg-amber-600 hover:bg-amber-700 text-white border-none w-full max-w-xs mx-auto">
+                    <a href="{{ route('produk') }}"
+                        class="btn bg-amber-600 hover:bg-amber-700 text-white border-none w-full max-w-xs mx-auto">
                         <i class="fa-solid fa-shopping-bag"></i>
                         Mulai Belanja
                     </a>
@@ -141,7 +151,8 @@
     @if (config('midtrans.is_production'))
         <script src="https://app.midtrans.com/snap/snap.js" data-client-key="{{ config('midtrans.client_key') }}"></script>
     @else
-        <script src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key="{{ config('midtrans.client_key') }}"></script>
+        <script src="https://app.sandbox.midtrans.com/snap/snap.js"
+            data-client-key="{{ config('midtrans.client_key') }}"></script>
     @endif
 
     <script>
@@ -189,13 +200,13 @@
 
                     // AJAX to konfirmasi and get snap token
                     fetch('{{ route('pesanan.konfirmasi') }}', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                                'X-Requested-With': 'XMLHttpRequest'
-                            }
-                        })
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                            'X-Requested-With': 'XMLHttpRequest'
+                        }
+                    })
                         .then(response => response.json())
                         .then(data => {
                             console.log('Konfirmasi Response:', data);
@@ -205,21 +216,21 @@
 
                                 // Trigger Snap popup
                                 snap.pay(data.snap_token, {
-                                    onSuccess: function(result) {
+                                    onSuccess: function (result) {
                                         console.log('Payment Success:', result);
 
                                         fetch('/payment/update-status', {
-                                                method: 'POST',
-                                                headers: {
-                                                    'Content-Type': 'application/json',
-                                                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                                                },
-                                                body: JSON.stringify({
-                                                    order_id: result.order_id,
-                                                    transaction_status: 'settlement',
-                                                    payment_type: result.payment_type
-                                                })
-                                            }).then(response => response.json())
+                                            method: 'POST',
+                                            headers: {
+                                                'Content-Type': 'application/json',
+                                                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                                            },
+                                            body: JSON.stringify({
+                                                order_id: result.order_id,
+                                                transaction_status: 'settlement',
+                                                payment_type: result.payment_type
+                                            })
+                                        }).then(response => response.json())
                                             .then(() => {
                                                 Swal.fire({
                                                     icon: 'success',
@@ -230,7 +241,7 @@
                                                 });
                                             });
                                     },
-                                    onPending: function(result) {
+                                    onPending: function (result) {
                                         console.log('Payment Pending:', result);
                                         Swal.fire({
                                             icon: 'info',
@@ -240,7 +251,7 @@
                                             window.location.href = '{{ route('history') }}';
                                         });
                                     },
-                                    onError: function(result) {
+                                    onError: function (result) {
                                         console.log('Payment Error:', result);
                                         Swal.fire({
                                             icon: 'error',
@@ -248,7 +259,7 @@
                                             text: 'Terjadi kesalahan, silahkan coba lagi',
                                         });
                                     },
-                                    onClose: function() {
+                                    onClose: function () {
                                         console.log('Payment Popup Closed');
                                     }
                                 });

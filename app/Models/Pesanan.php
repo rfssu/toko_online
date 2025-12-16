@@ -20,13 +20,13 @@ class Pesanan extends Model
     ];
 
     public const STATUS_PENDING = 'pending_payment';
-    public const STATUS_CO      = 'co';
+    public const STATUS_CO = 'co';
     public const STATUS_PICKUP = 'pickup';
 
     public const STATUS = [
         self::STATUS_PENDING => 'Menunggu Pembayaran',
-        self::STATUS_CO      => 'Sudah Dibayar',
-        self::STATUS_PICKUP  => 'Selesai',
+        self::STATUS_CO => 'Sudah Dibayar & Siap Dipickup',
+        self::STATUS_PICKUP => 'Selesai',
     ];
 
     public function user()

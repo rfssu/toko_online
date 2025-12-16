@@ -197,22 +197,4 @@
         @endif
     </div>
 
-    {{-- SECTION 5: PROMO BANNER --}}
-    <div class="bg-gradient-to-r from-amber-600 to-orange-600 py-12">
-        <div class="container mx-auto px-4 md:px-8">
-            <div class="text-center text-white">
-                <h2 class="text-2xl md:text-3xl font-bold mb-3">
-                    🎉 Dapatkan Diskon hingga 30%!
-                </h2>
-                <p class="text-amber-100 mb-6 md:text-lg">
-                    Untuk pembelian minimal Rp 200.000. Promo terbatas!
-                </p>
-                <button
-                    class="btn bg-white text-amber-600 hover:bg-gray-100 border-none rounded-full px-8 shadow-xl font-bold">
-                    <i class="fa-solid fa-tag"></i> Lihat Promo
-                </button>
-            </div>
-        </div>
-    </div>
-
 @endsection
