@@ -132,7 +132,8 @@ class PesanController extends Controller
 
     public function konfirmasi(Request $request)
     {
-        $user = User::where('id', Auth::user()->id)->first();
+        $params = $request->all();
+        $user = $this->user;
 
         // Validasi user profile
         if (empty($user->alamat) || empty($user->no_hp)) {
@@ -146,11 +147,9 @@ class PesanController extends Controller
             return redirect('profile');
         }
 
-        $pesanan = Pesanan::where('user_id', Auth::user()->id)
-            ->where('status', 'keranjang')
-            ->first();
+        $pesanan_details = $user->barang_keranjang;
 
-        if (!$pesanan) {
+        if ($pesanan_details->isEmpty()) {
             if ($request->ajax()) {
                 return response()->json([
                     'success' => false,
@@ -161,10 +160,20 @@ class PesanController extends Controller
             return redirect('/');
         }
 
-        // Update status ke pending_payment
-        $pesanan->status = 'pending_payment';
-        $pesanan->save();
+        // Create pesanan
+        $prefix = 'CO-' . now()->format('ymd');
 
+        $pesanan = new Pesanan;
+        $pesanan->kode = $prefix . '-' . uniqid();
+        $pesanan->user_id = $user->id;
+        $pesanan->status = Pesanan::STATUS_PENDING;
+        $pesanan->saveOrFail();
+
+        $pesanan_details->each(function ($pesanan_detail) use ($pesanan) {
+            $pesanan_detail->harga = $pesanan_detail->barang->harga;
+            $pesanan_detail->pesanan_id = $pesanan->id;
+            $pesanan_detail->saveOrFail();
+        });
         // Create Midtrans Snap token
         try {
             $midtransService = new \App\Services\MidtransService();

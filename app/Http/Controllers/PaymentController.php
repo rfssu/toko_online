@@ -112,7 +112,6 @@ class PaymentController extends Controller
             return response()->json(['status' => 'error'], 403);
         }
 
-        // Find order by order_id (kode)
         $pesanan = Pesanan::where('kode', $notif->order_id)->first();
 
         if (!$pesanan) {
@@ -123,23 +122,20 @@ class PaymentController extends Controller
         $transactionStatus = $notif->transaction_status;
         $fraudStatus = $notif->fraud_status;
 
-        // Handle payment status
-        if ($transactionStatus == 'capture') {
-            if ($fraudStatus == 'accept') {
-                // Payment success
-                $this->updateOrderPaid($pesanan, $notif->payment_type);
+        if (
+            $transactionStatus === 'settlement' ||
+            ($transactionStatus === 'capture' && $fraudStatus === 'accept')
+        ) {
+            $pesanan->markAsPaid($notif->payment_type);
+
+            foreach ($pesanan->pesanan_detail as $detail) {
+                $barang = Barang::find($detail->barang_id);
+                if ($barang) {
+                    $barang->decrement('stok', $detail->jumlah);
+                }
             }
-        } elseif ($transactionStatus == 'settlement') {
-            // Payment success
-            $this->updateOrderPaid($pesanan, $notif->payment_type);
-        } elseif ($transactionStatus == 'pending') {
-            // Payment pending
-            $pesanan->status = 'pending_payment';
-            $pesanan->save();
-        } elseif (in_array($transactionStatus, ['deny', 'expire', 'cancel'])) {
-            // Payment failed
-            $pesanan->status = 'keranjang';
-            $pesanan->save();
+
+            Log::info('Payment Success: ' . $pesanan->kode);
         }
 
         return response()->json(['status' => 'success']);
@@ -187,5 +183,20 @@ class PaymentController extends Controller
             'status' => $pesanan->status,
             'status_label' => $pesanan->status_val
         ]);
+    }
+
+    public function updateStatus(Request $request)
+    {
+        $pesanan = Pesanan::where('kode', $request->order_id)->first();
+
+        if (!$pesanan || $pesanan->user_id != Auth::id()) {
+            return response()->json(['success' => false], 403);
+        }
+
+        $pesanan->markAsPaid($request->payment_type);
+
+        Log::info('Payment Success (Manual): ' . $pesanan->kode);
+
+        return response()->json(['success' => true]);
     }
 }

@@ -207,14 +207,28 @@
                                 snap.pay(data.snap_token, {
                                     onSuccess: function(result) {
                                         console.log('Payment Success:', result);
-                                        Swal.fire({
-                                            icon: 'success',
-                                            title: 'Pembayaran Berhasil!',
-                                            text: 'Pesanan Anda sedang diproses',
-                                            confirmButtonText: 'Lihat Pesanan'
-                                        }).then(() => {
-                                            window.location.href = '{{ route('history') }}';
-                                        });
+
+                                        fetch('/payment/update-status', {
+                                                method: 'POST',
+                                                headers: {
+                                                    'Content-Type': 'application/json',
+                                                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                                                },
+                                                body: JSON.stringify({
+                                                    order_id: result.order_id,
+                                                    transaction_status: 'settlement',
+                                                    payment_type: result.payment_type
+                                                })
+                                            }).then(response => response.json())
+                                            .then(() => {
+                                                Swal.fire({
+                                                    icon: 'success',
+                                                    title: 'Pembayaran Berhasil!',
+                                                    confirmButtonText: 'Lihat Pesanan'
+                                                }).then(() => {
+                                                    window.location.href = '{{ route('history') }}';
+                                                });
+                                            });
                                     },
                                     onPending: function(result) {
                                         console.log('Payment Pending:', result);

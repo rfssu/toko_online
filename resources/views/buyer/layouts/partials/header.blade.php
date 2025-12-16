@@ -82,7 +82,7 @@
                             <span class="font-bold text-lg mb-5 text-center">Anda belum login</span>
                             <div class="card-actions">
                                 <a href="{{ route('login') }}" class="btn bg-amber-600 hover:bg-amber-700 text-white btn-block btn-sm border-none">
-                                    Login   
+                                    Login
                                 </a>
                             </div>
                         @endauth
@@ -113,7 +113,11 @@
                                 <span class="badge badge-ghost text-xs">New</span>
                             </a>
                         </li>
-                        <li><a>Riwayat Pesanan</a></li>
+                        <li>
+                            <a href="{{ route('history') }}" class="justify-between">
+                                Riwayat Pesanan
+                            </a>
+                        </li>
                         <li>
                             <form action="{{ route('logout') }}" method="POST">@csrf
                                 <button type="submit">Logout</button>

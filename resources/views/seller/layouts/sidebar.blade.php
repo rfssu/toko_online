@@ -39,7 +39,7 @@
                         <a href="{{ route('barangs.index') }}"
                             class="flex gap-4 {{ request()->routeIs('barangs.*') ? 'active' : '' }}">
                             <i class="ri-stack-fill"></i>
-                            Olah barang
+                            Olah Barang
                         </a>
                     </li>
                     <li>

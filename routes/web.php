@@ -58,6 +58,7 @@ Route::middleware(['auth'])->group(function () {
     // PAYMENT - Midtrans Integration
     Route::get('/payment/{pesanan_id}', [PaymentController::class, 'index'])->name('payment.index');
     Route::get('/payment/{pesanan_id}/status', [PaymentController::class, 'checkStatus'])->name('payment.status');
+    Route::post('/payment/update-status', [PaymentController::class, 'updateStatus'])->name('payment.update-status');
     Route::middleware(['role:admin,seller'])->group(function () {
         Route::get('dashboard', [LabaController::class, 'index'])->name('dashboard');
         Route::get('dashboard/export', [LabaController::class, 'export'])->name('dashboard.export');

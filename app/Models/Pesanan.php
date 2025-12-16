@@ -19,38 +19,48 @@ class Pesanan extends Model
         'payment_type',
     ];
 
+    public const STATUS_PENDING = 'pending_payment';
+    public const STATUS_CO      = 'co';
+    public const STATUS_PICKUP = 'pickup';
+
     public const STATUS = [
-        'keranjang' => 'Keranjang',
-        'pending_payment' => 'Menunggu Pembayaran',
-        'checkout' => 'Sudah Dibayar',
-        'siap_pickup' => 'Siap Pickup',
-        'co' => 'Check Out',
-        'pickup' => 'Pickup',
+        self::STATUS_PENDING => 'Menunggu Pembayaran',
+        self::STATUS_CO      => 'Sudah Dibayar',
+        self::STATUS_PICKUP  => 'Selesai',
     ];
 
     public function user()
     {
-        return $this->belongsTo(User::class, 'user_id', 'id');
+        return $this->belongsTo(User::class);
     }
-
 
     public function pesanan_detail()
     {
-        return $this->hasMany(PesananDetail::class, 'pesanan_id', 'id');
+        return $this->hasMany(PesananDetail::class);
+    }
+    public function getStatusValAttribute()
+    {
+        return self::STATUS[$this->status] ?? $this->status;
+    }
+
+    public function getTotalAttribute()
+    {
+        return $this->pesanan_detail->sum('total');
     }
 
     public function getItemCount()
     {
         return $this->pesanan_detail()->sum('jumlah');
     }
-
-    public function getStatusValAttribute()
+    public function markAsPaid(string $paymentType): void
     {
-        return self::STATUS[$this->status] ?? ucfirst($this->status);
-    }
+        if ($this->status === self::STATUS_CO) {
+            return;
+        }
 
-    public function getTotalAttribute()
-    {
-        return $this->pesanan_detail->sum('total');
+        $this->update([
+            'status' => self::STATUS_CO,
+            'payment_type' => $paymentType,
+        ]);
     }
 }
