@@ -39,7 +39,7 @@
         </div>
 
         <div class="form-control">
-            <input type="number" name="stok" placeholder="Stok" class="input input-bordered w-full" />
+            <input type="number" name="stok_fisik" placeholder="Stok" class="input input-bordered w-full" value="{{ $model->stok_fisik ?? 0 }}" />
         </div>
 
         <div class="form-control">

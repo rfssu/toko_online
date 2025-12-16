@@ -44,8 +44,15 @@ class BarangController extends Controller
 
     public function save(Request $request, $id = null)
     {
-        $model = $id ? $this->findModel(['id' => $id]) : new Barang;
         $params = $request->all();
+
+        if ($id) {
+            $model = $this->findModel(['id' => $id]);
+            $model->stok = $params['stok_fisik'] + ($model->stok - $model->stok_fisik);
+        } else {
+            $model = new Barang;
+            $model->stok = $params['stok_fisik'];
+        }
         $model->validator($params, $model->rules(), [], $model->labels())->validate();
         if ($request->ajax()) {
             return;
@@ -100,7 +107,6 @@ class BarangController extends Controller
             }
 
             return redirect()->back()->with('success', $message);
-
         } catch (\Exception $e) {
             return redirect()->back()->with(
                 'error',

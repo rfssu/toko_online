@@ -28,7 +28,7 @@ class Barang extends Model
             null => [
                 'nama_barang' => 'required',
                 'harga' => 'required',
-                'stok' => 'required',
+                'stok_fisik' => 'required',
             ]
         ];
 
@@ -41,7 +41,7 @@ class Barang extends Model
         return [
             'nama_barang' => 'Nama Barang',
             'harga' => 'Harga',
-            'stok' => 'Stok',
+            'stok_fisik' => 'Stok',
             'keterangan' => 'Keterangan'
         ];
     }
@@ -50,5 +50,46 @@ class Barang extends Model
     public function pesanan_detail()
     {
         return $this->hasMany(PesananDetail::class, 'barang_id');
+    }
+
+
+    public function getStokReadyAttribute()
+    {
+        $terjual = $this->pesanan_detail()
+            ->whereHas('pesanan', function ($q) {
+                $q->whereIn('status', [
+                    Pesanan::STATUS_CO,
+                    Pesanan::STATUS_PICKUP,
+                ]);
+            })
+            ->sum('jumlah');
+
+        return $this->stok - $terjual;
+    }
+
+    public function getStokFisikAttribute()
+    {
+        $terjual = $this->pesanan_detail()
+            ->whereHas('pesanan', function ($q) {
+                $q->whereIn('status', [
+                    Pesanan::STATUS_PICKUP,
+                ]);
+            })
+            ->sum('jumlah');
+
+        return $this->stok - $terjual;
+    }
+
+    public function getStokBookingAttribute()
+    {
+        $terjual = $this->pesanan_detail()
+            ->whereHas('pesanan', function ($q) {
+                $q->whereIn('status', [
+                    Pesanan::STATUS_CO,
+                ]);
+            })
+            ->sum('jumlah');
+
+        return $terjual;
     }
 }

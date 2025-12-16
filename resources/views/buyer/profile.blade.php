@@ -47,10 +47,6 @@
                             <i class="fa-solid fa-user text-lg"></i>
                             <span>Informasi Profil</span>
                         </a>
-                        <a href="#" class="flex items-center gap-3 px-4 py-3 text-gray-600 hover:bg-gray-50 rounded-lg font-medium group transition">
-                            <i class="fa-solid fa-shopping-bag text-lg"></i>
-                            <span>Pesanan Saya</span>
-                        </a>
                         <a href="#password-section" onclick="showPasswordSection()" class="flex items-center gap-3 px-4 py-3 text-gray-600 hover:bg-gray-50 rounded-lg font-medium group transition">
                             <i class="fa-solid fa-lock text-lg"></i>
                             <span>Ubah Password</span>

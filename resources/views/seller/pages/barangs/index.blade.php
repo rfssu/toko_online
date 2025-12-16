@@ -23,8 +23,7 @@
             <form method="GET" action="{{ $indexRoute() }}" class="mb-4">
                 <div class="flex flex-col sm:flex-row gap-2 w-full justify-between">
                     <div class="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
-                        <a href="{{ $createRoute() }}" onclick="modalFormAjax(this, event)"
-                            class="btn btn-primary w-full sm:w-auto">
+                        <a href="{{ $createRoute() }}" onclick="modalFormAjax(this, event)" class="btn btn-primary w-full sm:w-auto">
                             <i class="ri-add-line mr-2"></i>
                             Tambah Barang
                         </a>
@@ -36,8 +35,7 @@
                                 Import
                                 <i class="ri-arrow-down-s-line"></i>
                             </label>
-                            <ul tabindex="0"
-                                class="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-64 mt-2">
+                            <ul tabindex="0" class="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-64 mt-2">
                                 <li>
                                     <a href="{{ route('barangs.template') }}" class="gap-2">
                                         <i class="ri-file-excel-line text-green-600"></i>
@@ -73,7 +71,9 @@
                             <th>Nama Barang</th>
                             <th>Gambar</th>
                             <th>Harga</th>
-                            <th>Stok</th>
+                            <th>Dipesan</th>
+                            <th>Siap Dijual</th>
+                            <th>Total Stok</th>
                             <th>Keterangan</th>
                         </tr>
                     </thead>
@@ -85,22 +85,19 @@
                             <tr>
                                 <td>{{ $no++ }}</td>
                                 <td>
-                                    <a href="{{ $deleteRoute($model) }}" onclick="modalDeleteConfirm(this, event)"
-                                        data-name="{{ $model->nama_barang }}" class="btn btn-ghost btn-sm">
+                                    <a href="{{ $deleteRoute($model) }}" onclick="modalDeleteConfirm(this, event)" data-name="{{ $model->nama_barang }}" class="btn btn-ghost btn-sm">
                                         <i class="ri-delete-bin-line"></i>
                                     </a>
-                                    <a href="{{ $editRoute($model) }}" onclick="modalFormAjax(this, event)"
-                                        class="btn btn-ghost btn-sm">
+                                    <a href="{{ $editRoute($model) }}" onclick="modalFormAjax(this, event)" class="btn btn-ghost btn-sm">
                                         <i class="ri-pencil-line"></i>
                                     </a>
                                 </td>
                                 <td>{{ $model->nama_barang }}</td>
                                 <td>
-                                    @if($model->file('gambar')->hasFile())
+                                    @if ($model->file('gambar')->hasFile())
                                         <div class="avatar">
                                             <div class="w-16 h-16 rounded mb-2">
-                                                <img src="{{ $model->file('gambar')->preview() }}"
-                                                    alt="{{ $model->nama_barang }}" />
+                                                <img src="{{ $model->file('gambar')->preview() }}" alt="{{ $model->nama_barang }}" />
                                             </div>
                                         </div>
                                     @else
@@ -108,7 +105,9 @@
                                     @endif
                                 </td>
                                 <td>Rp {{ number_format($model->harga, 0, ',', '.') }}</td>
-                                <td>{{ $model->stok }}</td>
+                                <td>{{ $model->stok_booking }}</td>
+                                <td>{{ $model->stok_ready }}</td>
+                                <td>{{ $model->stok_fisik }}</td>
                                 <td>{{ $model->keterangan }}</td>
                             </tr>
                         @empty
@@ -159,8 +158,7 @@
                     <label class="label">
                         <span class="label-text font-semibold">Pilih File</span>
                     </label>
-                    <input type="file" name="file" accept=".xlsx,.xls,.csv" required
-                        class="file-input file-input-bordered file-input-primary w-full" />
+                    <input type="file" name="file" accept=".xlsx,.xls,.csv" required class="file-input file-input-bordered file-input-primary w-full" />
                     <label class="label">
                         <span class="label-text-alt">Format: .xlsx, .xls, .csv (Max: 2MB)</span>
                     </label>
