@@ -28,6 +28,30 @@
                             <i class="ri-add-line mr-2"></i>
                             Tambah Barang
                         </a>
+
+                        <!-- Import Dropdown -->
+                        <div class="dropdown dropdown-end w-full sm:w-auto">
+                            <label tabindex="0" class="btn btn-primary w-full sm:w-auto">
+                                <i class="ri-upload-line"></i>
+                                Import
+                                <i class="ri-arrow-down-s-line"></i>
+                            </label>
+                            <ul tabindex="0"
+                                class="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-64 mt-2">
+                                <li>
+                                    <a href="{{ route('barangs.template') }}" class="gap-2">
+                                        <i class="ri-file-excel-line text-green-600"></i>
+                                        <span>Download Template</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a onclick="document.getElementById('import_modal').showModal()" class="gap-2">
+                                        <i class="ri-upload-cloud-line text-blue-600"></i>
+                                        <span>Upload File Import</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
                     </div>
                     <div class="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
                         {{ $models->links('seller/components/per-page') }}
@@ -101,4 +125,83 @@
             </div>
         </div>
     </div>
+
+    <!-- Import Modal -->
+    <dialog id="import_modal" class="modal">
+        <div class="modal-box max-w-2xl">
+            <h3 class="font-bold text-lg mb-4">
+                <i class="ri-upload-cloud-line text-primary"></i>
+                Import Barang dari Excel/CSV
+            </h3>
+
+            <form action="{{ route('barangs.import') }}" method="POST" enctype="multipart/form-data">
+                @csrf
+
+                <!-- Instructions -->
+                <div class="alert alert-info mb-4">
+                    <i class="ri-information-line"></i>
+                    <div>
+                        <p class="font-bold">Instruksi:</p>
+                        <ol class="list-decimal list-inside text-sm mt-2">
+                            <li>Download template Excel terlebih dahulu</li>
+                            <li>Isi data sesuai format: nama_barang, harga, stok, keterangan</li>
+                            <li>Upload file (.xlsx, .xls, atau .csv)</li>
+                            <li><strong>Produk sudah ada?</strong> Stok akan <strong>ditambahkan</strong> + harga diupdate
+                            </li>
+                            <li><strong>Produk baru?</strong> Akan ditambahkan sebagai produk baru</li>
+                            <li>Gambar produk dapat diupload manual setelah import</li>
+                        </ol>
+                    </div>
+                </div>
+
+                <!-- File Upload -->
+                <div class="form-control w-full mb-4">
+                    <label class="label">
+                        <span class="label-text font-semibold">Pilih File</span>
+                    </label>
+                    <input type="file" name="file" accept=".xlsx,.xls,.csv" required
+                        class="file-input file-input-bordered file-input-primary w-full" />
+                    <label class="label">
+                        <span class="label-text-alt">Format: .xlsx, .xls, .csv (Max: 2MB)</span>
+                    </label>
+                </div>
+
+                <!-- Sample Format -->
+                <div class="overflow-x-auto mb-4">
+                    <p class="text-sm font-semibold mb-2">Contoh Format:</p>
+                    <table class="table table-xs table-bordered">
+                        <thead>
+                            <tr class="bg-base-200">
+                                <th>nama_barang</th>
+                                <th>harga</th>
+                                <th>stok</th>
+                                <th>keterangan</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Bakpia Pathok</td>
+                                <td>50000</td>
+                                <td>100</td>
+                                <td>Rasa Coklat</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="modal-action">
+                    <button type="button" onclick="document.getElementById('import_modal').close()" class="btn btn-ghost">
+                        Batal
+                    </button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="ri-upload-line"></i>
+                        Upload & Import
+                    </button>
+                </div>
+            </form>
+        </div>
+        <form method="dialog" class="modal-backdrop">
+            <button>close</button>
+        </form>
+    </dialog>
 @endsection

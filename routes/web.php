@@ -64,6 +64,10 @@ Route::middleware(['auth'])->group(function () {
 
 
 
+        // Product Import Routes
+        Route::get('/barangs/template/download', [BarangController::class, 'downloadTemplate'])->name('barangs.template');
+        Route::post('/barangs/import', [BarangController::class, 'import'])->name('barangs.import');
+
         // Resource routes
         Route::resource('users', UserController::class);
         Route::resource('barangs', BarangController::class);
