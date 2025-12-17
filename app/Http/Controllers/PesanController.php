@@ -148,7 +148,6 @@ class PesanController extends Controller
             $result = $midtransService->createTransaction($params);
 
             if (!$result['success']) {
-                \Log::error('Snap Token Creation Failed', ['message' => $result['message']]);
 
                 if ($request->ajax()) {
                     return response()->json([
@@ -165,11 +164,6 @@ class PesanController extends Controller
             $pesanan->snap_token = $result['snap_token'];
             $pesanan->save();
 
-            \Log::info('Snap Token Created', [
-                'pesanan_id' => $pesanan->id,
-                'token_length' => strlen($result['snap_token'])
-            ]);
-
             // Return AJAX response with snap token
             if ($request->ajax()) {
                 return response()->json([
@@ -182,7 +176,6 @@ class PesanController extends Controller
             // Fallback redirect (shouldn't happen)
             return redirect()->route('payment.index', $pesanan->id);
         } catch (\Exception $e) {
-            \Log::error('Konfirmasi Exception', ['error' => $e->getMessage()]);
 
             if ($request->ajax()) {
                 return response()->json([

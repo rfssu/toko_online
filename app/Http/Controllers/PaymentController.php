@@ -23,7 +23,7 @@ class PaymentController extends Controller
             $this->midtransService = new MidtransService();
         } catch (\Error $e) {
             // Midtrans package not installed
-            \Log::error('Midtrans Package Not Installed: ' . $e->getMessage());
+            Log::error('Midtrans Package Not Installed: ' . $e->getMessage());
         }
     }
 
@@ -73,10 +73,7 @@ class PaymentController extends Controller
         $result = $this->midtransService->createTransaction($params);
 
         if (!$result['success']) {
-            \Log::error('Midtrans Create Transaction Failed', [
-                'message' => $result['message'] ?? 'Unknown',
-                'pesanan_id' => $pesanan->id
-            ]);
+
             Alert::error('Gagal membuat transaksi: ' . ($result['message'] ?? 'Unknown error'), 'Error');
             return redirect()->route('checkout');
         }
@@ -84,13 +81,6 @@ class PaymentController extends Controller
         // Save snap token
         $pesanan->snap_token = $result['snap_token'];
         $pesanan->save();
-
-        // Debug log
-        \Log::info('Payment Page Ready', [
-            'pesanan_id' => $pesanan->id,
-            'snap_token_length' => strlen($result['snap_token']),
-            'client_key_length' => strlen($this->midtransService->getClientKey()),
-        ]);
 
         // Show payment page with Snap popup
         return view('pesan.payment', [
@@ -108,14 +98,12 @@ class PaymentController extends Controller
         $notif = $this->midtransService->verifyNotification($request->all());
 
         if (!$notif) {
-            Log::error('Midtrans Invalid Notification');
             return response()->json(['status' => 'error'], 403);
         }
 
         $pesanan = Pesanan::where('kode', $notif->order_id)->first();
 
         if (!$pesanan) {
-            Log::error('Midtrans Order Not Found: ' . $notif->order_id);
             return response()->json(['status' => 'error'], 404);
         }
 
@@ -134,8 +122,6 @@ class PaymentController extends Controller
                     $barang->decrement('stok', $detail->jumlah);
                 }
             }
-
-            Log::info('Payment Success: ' . $pesanan->kode);
         }
 
         return response()->json(['status' => 'success']);
@@ -163,8 +149,6 @@ class PaymentController extends Controller
                 $barang->save();
             }
         }
-
-        Log::info('Payment Success: ' . $pesanan->kode);
     }
 
     /**
@@ -194,8 +178,6 @@ class PaymentController extends Controller
         }
 
         $pesanan->markAsPaid($request->payment_type);
-
-        Log::info('Payment Success (Manual): ' . $pesanan->kode);
 
         return response()->json(['success' => true]);
     }
