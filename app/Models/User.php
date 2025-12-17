@@ -75,6 +75,7 @@ class User extends Authenticatable
                         ->symbols(),
                     'max:256'
                 ],
+                'password_confirmation' => 'required|same:password',
                 'name' => 'required|max:256',
                 'email' => [
                     'required',
@@ -84,6 +85,25 @@ class User extends Authenticatable
                 ],
                 'role' => 'required',
                 'status' => 'required'
+            ],
+            'setting' => [
+                'password' => [
+                    'required',
+                    'string',
+                    Password::min(8)
+                        ->mixedCase()
+                        ->numbers()
+                        ->symbols(),
+                    'max:256'
+                ],
+                'password_confirmation' => 'required|same:password',
+                'name' => 'required|max:256',
+                'email' => [
+                    'required',
+                    Rule::unique($this->getTable())->ignore($this),
+                    'email',
+                    'max:256'
+                ],
             ]
         ];
 

@@ -63,6 +63,8 @@ Route::middleware('user.status')->group(function () {
         Route::middleware(['role:admin,seller'])->group(function () {
             Route::get('dashboard', [LabaController::class, 'index'])->name('dashboard');
             Route::get('dashboard/export', [LabaController::class, 'export'])->name('dashboard.export');
+            Route::get('setting/profile', [ProfileController::class, 'index'])->name('setting.profile.index');
+            Route::put('setting/profile/update/{id}', [ProfileController::class, 'update'])->name('setting.profile.update');
 
 
 

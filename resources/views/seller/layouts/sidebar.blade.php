@@ -56,7 +56,7 @@
                         </h2>
                     </li>
                     <li>
-                        <a href="#" class="flex gap-4">
+                        <a href="{{ route('setting.profile.index') }}" class="flex gap-4 {{ request()->routeIs('setting.profile.index') ? 'active' : '' }}">
                             <i class="ri-id-card-line"></i>
                             Edit Profil
                         </a>

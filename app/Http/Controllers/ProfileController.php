@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\AutoFill;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
@@ -10,48 +11,39 @@ use Illuminate\Support\Facades\Hash;
 
 class ProfileController extends Controller
 {
+    public $user;
+
     public function __construct()
     {
-        $this->middleware('auth');
+        $this->middleware(function ($request, $next) {
+            $this->user = Auth::user();
+            return $next($request);
+        });
     }
 
     public function index()
     {
-        $user = User::where('id', Auth::user()->id)->first();
-        return view('profile.index', compact('user'));
+        $model = $this->user;
+        return view('profile.index', get_defined_vars());
     }
 
-    public function update(Request $request)
+    public function update(Request $request, $id = null)
     {
-        $this->validate($request, [
-            'password' => 'min:8|confirmed',
-            'no_hp' => 'integer',
-        ]);
-
-        if ($request->has('no_hp') && !is_numeric($request->no_hp)) {
-            Alert::error('Gagal diupdate', 'Error');
-            return redirect('profile');
+        $model = $id ? $this->findModel(['id' => $id]) : new User;
+        $params = $request->all();
+        $params['password'] ??= $model->password;
+        $params['password_confirmation'] ??= $model->password;
+        $model->validator($params, $model->rules('setting'), [], $model->labels())->validate();
+        if ($request->ajax()) {
+            return;
         }
+        AutoFill::fill($model, params: $params);
+        $model->saveOrFail();
+        return redirect()->back()->with('success', 'Simpan Berhasil');
+    }
 
-        $user = User::where('id', Auth::user()->id)->first();
-        $user->name = $request->input('name');
-        $user->email = $request->input('email');
-        $user->alamat = $request->input('alamat');
-        $user->no_hp = $request->input('no_hp');
-
-        if(empty($user->name) || empty($user->email) || empty($user->alamat) || empty($user->no_hp)) {
-            Alert::error('Gagal diupdate', 'Error');
-            return redirect('profile');
-        }
-
-        if(!empty($request->password)) {
-            $user->password = Hash::make($request->password);
-        }
-
-        $user->update();
-        Alert::success('Sukses diupdate', 'Success');
-        return redirect('profile');
+    private function findModel(array $params)
+    {
+        return User::where($params)->firstOrFail();
     }
 }
-
-

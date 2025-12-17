@@ -13,9 +13,13 @@ class UserController extends Controller
 {
     use CrudTrait;
     public $user;
+
     public function __construct()
     {
-        $this->user = Auth::user();
+        $this->middleware(function ($request, $next) {
+            $this->user = Auth::user();
+            return $next($request);
+        });
     }
     public function index(Request $request)
     {
@@ -43,6 +47,7 @@ class UserController extends Controller
         $model = $id ? $this->findModel(['id' => $id]) : new User;
         $params = $request->all();
         $params['password'] ??= $model->password;
+        $params['password_confirmation'] ??= $model->password;
         $model->validator($params, $model->rules(), [], $model->labels())->validate();
         if ($request->ajax()) {
             return;
