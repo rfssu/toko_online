@@ -1,5 +1,9 @@
 <?php
+
 namespace App\Http\Controllers;
+
+use App\Helpers\AutoFill;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -7,8 +11,6 @@ class AuthController extends Controller
 {
     public function showLoginForm()
     {
-        // Mengarah ke file view login Anda
-        // Karena Anda bilang punya folder auth di views, pakai itu:
         return view('auth.login');
     }
 
@@ -22,40 +24,28 @@ class AuthController extends Controller
         return back()->withErrors(['email' => 'Salah email atau password']);
     }
 
-    // ... method login yang sudah ada ...
-
-    // 1. Tampilkan Form Register
     public function showRegisterForm()
     {
-        // Pastikan file ini ada di resources/views/auth/register.blade.php
         return view('auth.register');
     }
 
-    // 2. Proses Simpan User Baru
     public function register(Request $request)
     {
-        // Validasi Input
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email',
-            'password' => 'required|min:5|confirmed', // Pastikan di view ada input name="password_confirmation"
-        ]);
+        $params = $request->all();
+        $model = new User;
+        $params['role'] = 'buyer';
+        $params['status'] = 'on';
+        $model->validator($params, $model->rules(), [], $model->labels())->validate();
+        if ($request->ajax()) {
+            return;
+        }
+        AutoFill::fill($model, params: $params);
+        $model->saveOrFail();
 
-        // Buat User Baru
-        // Pastikan import model User di atas: use App\Models\User;
-        $user = \App\Models\User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => \Illuminate\Support\Facades\Hash::make($request->password),
-            // Tambahkan field lain jika perlu (misal: 'role' => 'customer')
-        ]);
-
-        // Langsung Login otomatis setelah daftar
-        Auth::login($user);
-
-        // Lempar ke dashboard
-        return redirect()->route('dashboard');
+        Auth::login($model);
+        return redirect()->route('home')->with('success', 'Registrasi Berhasil');
     }
+
 
     public function logout(Request $request)
     {
@@ -63,7 +53,6 @@ class AuthController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        // Setelah logout, lempar user kembali ke halaman login
         return redirect('/');
     }
 }

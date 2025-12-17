@@ -110,7 +110,6 @@
                         <li>
                             <a href="{{ route('profile') }}" class="justify-between">
                                 Profile
-                                <span class="badge badge-ghost text-xs">New</span>
                             </a>
                         </li>
                         <li>

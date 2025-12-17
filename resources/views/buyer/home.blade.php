@@ -29,9 +29,9 @@
                         Tanpa bahan pengawet, dikemas vakum aman perjalanan jauh, dan garansi rasa otentik.
                     </p>
                     <div class="flex gap-3 justify-center md:justify-start">
-                        <button class="btn bg-amber-600 hover:bg-amber-700 text-white border-none rounded-full px-8 shadow-lg shadow-amber-200">
+                        <a href="{{ route('produk') }}" class="btn bg-amber-600 hover:bg-amber-700 text-white border-none rounded-full px-8 shadow-lg shadow-amber-200">
                             Belanja Sekarang
-                        </button>
+                        </a>
                     </div>
                 </div>
                 {{-- Image Area --}}
