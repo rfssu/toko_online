@@ -31,6 +31,7 @@ class UsersRole
         if ($user->role === 'buyer') {
             return redirect()->route('home');
         }
-        return redirect()->route('dashboard');
+        // Admin/seller fallback - redirect to admin products page
+        return redirect()->route('barangs.index');
     }
 }
