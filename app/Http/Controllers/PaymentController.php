@@ -9,6 +9,7 @@ use App\Services\MidtransService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 use RealRashid\SweetAlert\Facades\Alert;
 
 class PaymentController extends Controller
@@ -178,6 +179,19 @@ class PaymentController extends Controller
         }
 
         $pesanan->markAsPaid($request->payment_type);
+
+        // Send order confirmation email
+        try {
+            Mail::send('emails.order-confirmation', [
+                'pesanan' => $pesanan->load('pesanan_detail.barang', 'user')
+            ], function ($message) use ($pesanan) {
+                $message->to($pesanan->user->email);
+                $message->subject('Konfirmasi Pesanan #' . $pesanan->kode . ' - Toko Online Khas Jogja');
+            });
+        } catch (\Exception $e) {
+            // Log error but don't fail the payment
+            \Log::error('Order confirmation email failed: ' . $e->getMessage());
+        }
 
         return response()->json(['success' => true]);
     }

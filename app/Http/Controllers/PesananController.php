@@ -7,6 +7,7 @@ use App\Helpers\QuerySearch;
 use App\Models\Pesanan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 use App\Traits\CrudTrait;
 
 class PesananController extends Controller
@@ -60,10 +61,30 @@ class PesananController extends Controller
         if ($request->ajax()) {
             return;
         }
+
+        $oldStatus = $model->status;
         $model->status = 'pickup';
         $model->tanggal_pickup = now();
         $model->pic = $this->user->id;
         $model->saveOrFail();
+
+        // Send pickup ready email if status changed from 'co' to 'pickup'
+        if ($oldStatus === 'co' && $model->status === 'pickup') {
+            try {
+                $pesanan = $model->load('pesanan_detail.barang', 'user');
+
+                Mail::send('emails.order-ready-pickup', [
+                    'pesanan' => $pesanan
+                ], function ($message) use ($pesanan) {
+                    $message->to($pesanan->user->email);
+                    $message->subject('Pesanan #' . $pesanan->kode . ' Siap Diambil - Toko Online Khas Jogja');
+                });
+            } catch (\Exception $e) {
+                // Log error but don't fail the order confirmation
+                \Log::error('Pickup ready email failed: ' . $e->getMessage());
+            }
+        }
+
         return redirect()->back()->with('success', 'Pesanan berhasil dikonfirmasi!');
     }
 
