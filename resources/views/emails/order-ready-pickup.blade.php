@@ -189,6 +189,24 @@
                 </div>
             </div>
 
+            {{-- View QR Code Notice --}}
+            <div
+                style="text-align: center; margin: 30px 0; padding: 20px; background-color: #d1fae5; border-radius: 8px;">
+                <h3 style="color: #065f46; margin-top: 0;">🎫 QR Code Pickup</h3>
+                <p style="font-size: 14px; color: #666; margin-bottom: 10px;">
+                    QR code tersedia di halaman riwayat pesanan Anda
+                </p>
+                <p style="font-size: 14px; margin-top: 15px;">
+                    <a href="{{ url('/history/' . $pesanan->id) }}"
+                        style="display: inline-block; background-color: #10b981; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: bold;">
+                        Lihat QR Code
+                    </a>
+                </p>
+                <p style="font-size: 12px; color: #666; margin-top: 10px;">
+                    Tunjukkan QR code saat pickup untuk proses lebih cepat
+                </p>
+            </div>
+
             <div class="divider"></div>
 
             {{-- Contact Info --}}

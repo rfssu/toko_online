@@ -92,4 +92,101 @@ class PesananController extends Controller
     {
         return Pesanan::where($params)->firstOrFail();
     }
+
+    /**
+     * Show QR code scanner page
+     */
+    public function showScanner()
+    {
+        return view('seller.pages.pesanans.scanner');
+    }
+
+    /**
+     * Verify QR code and return order details
+     */
+    public function verifyQr(Request $request)
+    {
+        try {
+            // Decrypt QR data
+            $data = decrypt($request->qr_data);
+
+            // Find order
+            $pesanan = Pesanan::with('pesanan_detail.barang', 'user')
+                ->where('kode', $data['kode'])
+                ->where('id', $data['id'])
+                ->firstOrFail();
+
+            // Verify status (must be paid)
+            if ($pesanan->status === 'pending_payment') {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Pesanan belum dibayar'
+                ], 400);
+            }
+
+            // Check if already picked up
+            if ($pesanan->status === 'pickup') {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Pesanan sudah diambil pada ' . $pesanan->tanggal_pickup->format('d M Y H:i'),
+                    'pesanan' => $pesanan
+                ], 400);
+            }
+
+            return response()->json([
+                'success' => true,
+                'pesanan' => $pesanan
+            ]);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'QR Code tidak valid'
+            ], 400);
+        }
+    }
+
+    /**
+     * Confirm pickup from QR scanner
+     */
+    public function confirmPickupFromQr(Request $request)
+    {
+        try {
+            $pesanan = Pesanan::findOrFail($request->pesanan_id);
+
+            // Update status
+            $oldStatus = $pesanan->status;
+            $pesanan->status = 'pickup';
+            $pesanan->tanggal_pickup = now();
+            $pesanan->pic = $this->user->id;
+            $pesanan->save();
+
+            // Send pickup ready email if status changed from 'co' to 'pickup'
+            if ($oldStatus === 'co' && $pesanan->status === 'pickup') {
+                try {
+                    $pesananFull = $pesanan->load('pesanan_detail.barang', 'user');
+
+                    Mail::send('emails.order-ready-pickup', [
+                        'pesanan' => $pesananFull
+                    ], function ($message) use ($pesananFull) {
+                        $message->to($pesananFull->user->email);
+                        $message->subject('Pesanan #' . $pesananFull->kode . ' Selesai - Toko Online Khas Jogja');
+                    });
+                } catch (\Exception $e) {
+                    \Log::error('Pickup completion email failed: ' . $e->getMessage());
+                }
+            }
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Pickup berhasil dikonfirmasi'
+            ]);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan: ' . $e->getMessage()
+            ], 500);
+        }
+    }
 }

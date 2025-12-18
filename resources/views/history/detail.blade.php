@@ -31,14 +31,14 @@
                         <div class="text-center md:text-left">
                             <p class="text-sm text-gray-600 mb-2">Status Pesanan</p>
                             <span class="badge badge-lg text-white
-                                            {{ $pesanan->status == Pesanan::STATUS_CO ? 'badge-info' : '' }}
-                                            {{ $pesanan->status == Pesanan::STATUS_PICKUP ? 'badge-success' : '' }}
-                                            {{ $pesanan->status == Pesanan::STATUS_PENDING ? 'badge-warning' : '' }}">
+                                                {{ $pesanan->status == Pesanan::STATUS_CO ? 'badge-info' : '' }}
+                                                {{ $pesanan->status == Pesanan::STATUS_PICKUP ? 'badge-success' : '' }}
+                                                {{ $pesanan->status == Pesanan::STATUS_PENDING ? 'badge-warning' : '' }}">
                                 <i class="fa-solid 
-                                                {{ $pesanan->status == Pesanan::STATUS_CO ? 'fa-box' : '' }}
-                                                {{ $pesanan->status == Pesanan::STATUS_PICKUP ? 'fa-check' : '' }}
-                                                {{ $pesanan->status == Pesanan::STATUS_PENDING ? 'fa-clock' : '' }}
-                                                mr-1"></i>
+                                                    {{ $pesanan->status == Pesanan::STATUS_CO ? 'fa-box' : '' }}
+                                                    {{ $pesanan->status == Pesanan::STATUS_PICKUP ? 'fa-check' : '' }}
+                                                    {{ $pesanan->status == Pesanan::STATUS_PENDING ? 'fa-clock' : '' }}
+                                                    mr-1"></i>
                                 {{ $pesanan->status_val }}
                             </span>
                         </div>
@@ -134,6 +134,34 @@
                     @endif
                 </div>
             </div>
+
+            {{-- QR Code Card (for paid orders) --}}
+            @if($pesanan->status === App\Models\Pesanan::STATUS_CO || $pesanan->status === App\Models\Pesanan::STATUS_PICKUP)
+                <div class="card bg-gradient-to-br from-amber-50 to-orange-50 shadow-xl mb-6">
+                    <div class="card-body text-center">
+                        <h3 class="card-title justify-center text-2xl mb-2">
+                            <i class="fa-solid fa-qrcode text-amber-600"></i>
+                            QR Code Pickup
+                        </h3>
+                        <p class="text-sm text-gray-600 mb-4">
+                            Tunjukkan QR code ini kepada kasir saat mengambil pesanan
+                        </p>
+
+                        {{-- QR Code --}}
+                        <div class="flex justify-center mb-4 bg-white p-4 rounded-lg inline-block mx-auto">
+                            {!! $pesanan->qr_code !!}
+                        </div>
+
+                        <div class="alert alert-info">
+                            <i class="fa-solid fa-info-circle"></i>
+                            <span class="text-sm">
+                                <strong>Order #{{ $pesanan->kode }}</strong><br>
+                                Tunjukkan QR code ini atau sebutkan nomor pesanan
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            @endif
 
             {{-- Action Buttons (Payment Only) --}}
             @if($pesanan->status == 'pending_payment' && $pesanan->snap_token)

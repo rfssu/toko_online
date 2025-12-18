@@ -17,7 +17,10 @@
             <!-- Header -->
             <div class="flex justify-between items-center mb-4">
                 <h1 class="card-title text-lg "><b>Daftar Pesanan</b></h1>
-
+                <a href="{{ route('pesanans.scanner') }}" class="btn btn-primary">
+                    <i class="ri-qr-scan-2-line"></i>
+                    Scan QR Code
+                </a>
             </div>
 
             <form method="GET" action="{{ $indexRoute() }}" class="mb-4">
@@ -60,11 +63,13 @@
                                 <td>{{ $models->firstItem() + $index }}</td>
                                 <td>
                                     @if ($model->status === 'co')
-                                        <a href="{{ $editRoute($model) }}" onclick="modalFormAjax(this, event)" data-modal-size="large" class="btn btn-success btn-sm text-white">
+                                        <a href="{{ $editRoute($model) }}" onclick="modalFormAjax(this, event)"
+                                            data-modal-size="large" class="btn btn-success btn-sm text-white">
                                             <i class="ri-check-line"></i>
                                         </a>
                                     @elseif ($model->status === 'pickup')
-                                        <a href="{{ $editRoute($model) }}" onclick="modalFormAjax(this, event)" data-modal-size="large" class="btn btn-warning btn-sm text-white">
+                                        <a href="{{ $editRoute($model) }}" onclick="modalFormAjax(this, event)"
+                                            data-modal-size="large" class="btn btn-warning btn-sm text-white">
                                             <i class="ri-article-line"></i>
                                         </a>
                                     @endif

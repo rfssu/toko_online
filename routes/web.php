@@ -76,7 +76,12 @@ Route::middleware('user.status')->group(function () {
 
             // Product Import Routes
             Route::get('/barangs/template/download', [BarangController::class, 'downloadTemplate'])->name('barangs.template');
-            Route::post('/barangs/import', [BarangController::class, 'import'])->name('barangs.import');
+            Route::post('barangs/import', [BarangController::class, 'import'])->name('barangs.import');
+
+            // QR CODE SCANNER ROUTES
+            Route::get('/pesanans/scanner', [PesananController::class, 'showScanner'])->name('pesanans.scanner');
+            Route::post('/pesanans/verify-qr', [PesananController::class, 'verifyQr'])->name('pesanans.verify-qr');
+            Route::post('/pesanans/confirm-pickup-qr', [PesananController::class, 'confirmPickupFromQr'])->name('pesanans.confirm-pickup-qr');
 
             // Resource routes
 

@@ -59,13 +59,46 @@ class Pesanan extends Model
     }
     public function markAsPaid(string $paymentType): void
     {
-        if ($this->status === self::STATUS_CO) {
-            return;
-        }
+        $this->status = self::STATUS_CO;
+        $this->payment_type = $paymentType;
+        $this->save();
+    }
 
-        $this->update([
-            'status' => self::STATUS_CO,
-            'payment_type' => $paymentType,
+    /**
+     * Generate QR code for pickup verification (SVG for web)
+     */
+    public function getQrCodeAttribute()
+    {
+        // Generate encrypted data for QR code
+        $data = encrypt([
+            'kode' => $this->kode,
+            'id' => $this->id,
+            'total' => $this->total,
+            'timestamp' => now()->timestamp
         ]);
+
+        // Generate QR code as SVG
+        return \SimpleSoftwareIO\QrCode\Facades\QrCode::size(200)
+            ->margin(1)
+            ->generate($data);
+    }
+
+    /**
+     * Generate QR code for email (SVG for compatibility - works in Gmail/Outlook)
+     */
+    public function getQrCodeEmailAttribute()
+    {
+        // Generate encrypted data for QR code
+        $data = encrypt([
+            'kode' => $this->kode,
+            'id' => $this->id,
+            'total' => $this->total,
+            'timestamp' => now()->timestamp
+        ]);
+
+        // Generate QR code as SVG (no Imagick needed, works in modern email clients)
+        return \SimpleSoftwareIO\QrCode\Facades\QrCode::size(200)
+            ->margin(1)
+            ->generate($data);
     }
 }
