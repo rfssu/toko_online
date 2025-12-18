@@ -116,7 +116,7 @@
         let html5QrCode = null;
 
         // Initialize scanner on page load
-        document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('DOMContentLoaded', function() {
             initScanner();
         });
 
@@ -125,12 +125,16 @@
 
             const config = {
                 fps: 10,
-                qrbox: { width: 250, height: 250 },
+                qrbox: {
+                    width: 250,
+                    height: 250
+                },
                 aspectRatio: 1.0
             };
 
-            html5QrCode.start(
-                { facingMode: "environment" },
+            html5QrCode.start({
+                    facingMode: "environment"
+                },
                 config,
                 onScanSuccess,
                 onScanError
@@ -144,19 +148,22 @@
             // Stop scanner
             html5QrCode.stop();
 
-            // Verify QR code
+            // Verify QR code untuk dapat kode pesanan
             fetch('{{ route('pesanans.verify-qr') }}', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                },
-                body: JSON.stringify({ qr_data: decodedText })
-            })
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    body: JSON.stringify({
+                        qr_data: decodedText
+                    })
+                })
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
-                        displayOrderDetails(data.pesanan);
+                        // Redirect dengan kode pesanan yang sudah di-decrypt
+                        window.location.href = '{{ route('pesanans.index') }}?per_page=10&status=&search=' + data.pesanan.kode;
                     } else {
                         showError(data.message || 'QR Code tidak valid');
                         setTimeout(resetScanner, 3000);
@@ -209,13 +216,15 @@
             btn.innerHTML = '<span class="loading loading-spinner"></span> Processing...';
 
             fetch('{{ route('pesanans.confirm-pickup-qr') }}', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                },
-                body: JSON.stringify({ pesanan_id: currentPesananId })
-            })
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    body: JSON.stringify({
+                        pesanan_id: currentPesananId
+                    })
+                })
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
