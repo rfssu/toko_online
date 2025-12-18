@@ -35,7 +35,9 @@ COPY . /var/www
 COPY docker/nginx.conf /etc/nginx/sites-available/default
 
 # Install PHP dependencies
-RUN composer install --no-dev --optimize-autoloader
+ENV COMPOSER_ALLOW_SUPERUSER=1
+ENV COMPOSER_MEMORY_LIMIT=-1
+RUN composer install --no-dev --optimize-autoloader --no-interaction --ignore-platform-reqs
 
 # Install Node dependencies & build assets
 RUN npm install
