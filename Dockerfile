@@ -53,5 +53,10 @@ COPY docker/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 # Expose port
 EXPOSE 8080
 
+# Di Dockerfile, tambahkan di akhir sebelum CMD:
+RUN php artisan key:generate --force || true
+RUN php artisan migrate --force || true
+RUN php artisan storage:link || true
+
 # Start services
 CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
