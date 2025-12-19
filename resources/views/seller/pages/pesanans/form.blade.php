@@ -19,7 +19,7 @@
                     <span>Kode Pesanan</span>
                 </div>
                 <p class="text-xl font-bold">#{{ $model->kode }}</p>
-                <p class="text-xs text-base-content/50">{{ $model->created_at->diffForHumans() }}</p>
+                <p class="text-xs text-base-content/50">{{ $model->created_at->format('d/m/Y H:i') }}</p>
             </div>
         </div>
 
