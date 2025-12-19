@@ -93,10 +93,4 @@ Route::middleware('user.status')->group(function () {
 
     // Midtrans Notification (outside auth - accessed by Midtrans server)
     Route::post('/payment/notification', [PaymentController::class, 'notification'])->name('payment.notification');
-
-    // TEMPORARY: Clear view cache (REMOVE AFTER USE!)
-    Route::get('/clear-views-now', function () {
-        \Artisan::call('view:clear');
-        return 'View cache cleared! Now test /pesanans/2/edit';
-    });
 });

@@ -41,7 +41,7 @@
                     <span>Tanggal</span>
                 </div>
                 <p class="text-xl font-bold">
-                    {{ $statusPickup ? Carbon::parse($model->tanggal_pickup)->format('d M Y') : Carbon::parse($model->created_at)->format('d M Y') }}
+                    {{ $statusPickup ? Carbon::parse($model->tanggal_pickup)->translatedFormat('d F Y') : Carbon::parse($model->created_at)->translatedFormat('d F Y') }}
                 </p>
                 <div class="badge badge-warning badge-sm mt-1">{{ $model->status_val }}</div>
             </div>
