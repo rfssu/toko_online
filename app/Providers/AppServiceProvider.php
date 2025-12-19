@@ -26,7 +26,7 @@ class AppServiceProvider extends ServiceProvider
         }
 
         Blade::directive('currency', function ($angka) {
-            return "<?php echo Illuminate\Support\Number::format($angka, null, null, 'id'); ?>";
+            return "<?php echo 'Rp ' . number_format($angka, 0, ',', '.'); ?>";
         });
     }
 }
