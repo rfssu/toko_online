@@ -8,7 +8,6 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\HistoryController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\LabaController;
-use App\Http\Controllers\ClearCacheController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\FileController; // Kept from original, not in provided snippet but used later
 use App\Http\Controllers\HomeController; // Kept from original, not in provided snippet but used later
@@ -94,8 +93,4 @@ Route::middleware('user.status')->group(function () {
 
     // Midtrans Notification (outside auth - accessed by Midtrans server)
     Route::post('/payment/notification', [PaymentController::class, 'notification'])->name('payment.notification');
-
-    // Cache clear route (for production maintenance - requires token)
-    Route::get('/clear-cache', [ClearCacheController::class, 'clearAll'])->name('cache.clear');
 });
-
