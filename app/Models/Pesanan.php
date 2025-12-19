@@ -20,6 +20,12 @@ class Pesanan extends Model
         'pic'
     ];
 
+    protected $casts = [
+        'tanggal_pickup' => 'datetime',
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
+    ];
+
     public const STATUS_PENDING = 'pending_payment';
     public const STATUS_CO = 'co';
     public const STATUS_PICKUP = 'pickup';
