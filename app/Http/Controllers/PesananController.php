@@ -90,7 +90,9 @@ class PesananController extends Controller
 
     private function findModel(array $params)
     {
-        return Pesanan::where($params)->firstOrFail();
+        return Pesanan::with(['user', 'pesanan_detail.barang'])
+            ->where($params)
+            ->firstOrFail();
     }
 
     /**
