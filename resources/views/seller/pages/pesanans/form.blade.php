@@ -66,7 +66,7 @@
                             <tr>
                                 <td>{{ $loop->iteration }}</td>
                                 <td>{{ $pesanan->barang->nama_barang }}</td>
-                                <td class="text-right">@currency($pesanan->jumlah ?? 0) </td>
+                                <td class="text-right">{{ $pesanan->jumlah ?? 0 }} </td>
                                 <td class="text-right">@currency($pesanan->harga ?? 0)</td>
                                 <td class="text-right">@currency($pesanan->total ?? 0)</td>
                             </tr>
