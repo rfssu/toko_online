@@ -29,7 +29,7 @@ class PesananController extends Controller
             ->select('pesanans.*')
             ->leftJoin('users', 'pesanans.user_id', '=', 'users.id')
             ->leftJoin('users as pic', 'pesanans.pic', '=', 'pic.id')
-            ->whereIn('pesanans.status', ['co', 'pickup']);  // Exclude pending_payment
+            ->whereIn('pesanans.status', ['preparing', 'ready', 'co', 'pickup']);  // All paid statuses
 
         $models = QuerySearch::apply(
             query: $query,

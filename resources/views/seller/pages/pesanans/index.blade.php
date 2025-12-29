@@ -62,12 +62,24 @@
                             <tr>
                                 <td>{{ $models->firstItem() + $index }}</td>
                                 <td>
-                                    @if ($model->status === 'co')
+                                    @if ($model->status === 'preparing')
+                                        {{-- Mark as Ready button --}}
+                                        <form action="{{ route('pesanans.markReady', $model->id) }}" method="POST"
+                                            class="inline-block">
+                                            @csrf
+                                            <button type="submit" class="btn btn-info btn-sm text-white"
+                                                onclick="return confirm('Tandai pesanan ini siap untuk dipickup?')">
+                                                <i class="ri-check-double-line"></i> Siap
+                                            </button>
+                                        </form>
+                                    @elseif ($model->status === 'ready' || $model->status === 'co')
+                                        {{-- View Details / Confirm Pickup --}}
                                         <a href="{{ $editRoute($model) }}" onclick="modalFormAjax(this, event)"
                                             data-modal-size="large" class="btn btn-success btn-sm text-white">
                                             <i class="ri-check-line"></i>
                                         </a>
                                     @elseif ($model->status === 'pickup')
+                                        {{-- View History Only --}}
                                         <a href="{{ $editRoute($model) }}" onclick="modalFormAjax(this, event)"
                                             data-modal-size="large" class="btn btn-warning btn-sm text-white">
                                             <i class="ri-article-line"></i>
