@@ -36,8 +36,13 @@
                 </div>
                 {{-- Image Area --}}
                 <div class="order-1 md:order-2">
-                    {{-- Gunakan Vite asset untuk static images --}}
-                    <img src="{{ Vite::asset('resources/assets/photos/hero-bakpia.webp') }}" 
+                    {{-- Temporary: gunakan Unsplash fallback (ganti nanti dengan storage upload) --}}
+                    @php
+                        $heroImage = file_exists(public_path('storage/images/hero-bakpia.webp')) 
+                            ? asset('storage/images/hero-bakpia.webp')
+                            : 'https://images.unsplash.com/photo-1558961363-fa8fdf82db35?q=80&w=1200';
+                    @endphp
+                    <img src="{{ $heroImage }}" 
                          alt="Bakpia Khas Jogja - Oleh-oleh Terlengkap" 
                          class="w-full h-64 md:h-96 object-cover rounded-2xl shadow-2xl rotate-2 hover:rotate-0 transition duration-500">
                 </div>
