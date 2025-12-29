@@ -49,6 +49,11 @@ class PaymentController extends Controller
         // Build transaction params for Midtrans
         $itemDetails = [];
         foreach ($pesanan->pesanan_detail as $detail) {
+            // Skip if product deleted
+            if (!$detail->barang) {
+                continue;
+            }
+
             $itemDetails[] = [
                 'id' => $detail->barang->id,
                 'price' => $detail->barang->harga,
@@ -182,15 +187,18 @@ class PaymentController extends Controller
 
         // Send order confirmation email
         try {
+            // Eager load with null-safe check
+            $pesanan->load(['pesanan_detail.barang', 'user']);
+
             Mail::send('emails.order-confirmation', [
-                'pesanan' => $pesanan->load('pesanan_detail.barang', 'user')
+                'pesanan' => $pesanan
             ], function ($message) use ($pesanan) {
                 $message->to($pesanan->user->email);
                 $message->subject('Konfirmasi Pesanan #' . $pesanan->kode . ' - Toko Online Khas Jogja');
             });
         } catch (\Exception $e) {
             // Log error but don't fail the payment
-            \Log::error('Order confirmation email failed: ' . $e->getMessage());
+            Log::error('Order confirmation email failed: ' . $e->getMessage());
         }
 
         return response()->json(['success' => true]);
