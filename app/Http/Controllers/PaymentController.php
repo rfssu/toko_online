@@ -49,23 +49,19 @@ class PaymentController extends Controller
         // Build transaction params for Midtrans
         $itemDetails = [];
         foreach ($pesanan->pesanan_detail as $detail) {
-            // Skip if product deleted
-            if (!$detail->barang) {
-                continue;
-            }
-
+            // Use data from pesanan_detail (not barang) to handle deleted products
             $itemDetails[] = [
-                'id' => $detail->barang->id,
-                'price' => $detail->barang->harga,
-                'quantity' => $detail->jumlah,
-                'name' => $detail->barang->nama_barang,
+                'id' => $detail->id,
+                'price' => (int) $detail->harga,
+                'quantity' => (int) $detail->jumlah,
+                'name' => $detail->barang?->nama_barang ?? 'Produk (ID: ' . $detail->id . ')',
             ];
         }
 
         $params = [
             'transaction_details' => [
                 'order_id' => $pesanan->kode,
-                'gross_amount' => $pesanan->total,
+                'gross_amount' => (int) $pesanan->total,
             ],
             'item_details' => $itemDetails,
             'customer_details' => [
