@@ -105,7 +105,7 @@ class PesanController extends Controller
         }
 
         // Create pesanan with auto pickup time (3 hours from now)
-        $kode = 'ORD-' . date('ymd') . '-' . uniqid();
+        $kode = 'CO-' . date('ymd') . '-' . uniqid();
         $pesanan = Pesanan::lockForUpdate()->create([
             'kode' => $kode,
             'user_id' => $user->id,
