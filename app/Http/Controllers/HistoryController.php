@@ -15,7 +15,15 @@ class HistoryController extends Controller
     public function index()
     {
         $pesanans = Pesanan::where('user_id', Auth::user()->id)
-            ->whereIn('status', ['pending_payment', 'checkout', 'siap_pickup', 'co', 'pickup'])
+            ->whereIn('status', [
+                'pending_payment',
+                'preparing',     // ← NEW!
+                'ready',         // ← NEW!
+                'checkout',      // Legacy
+                'siap_pickup',   // Legacy
+                'co',            // Legacy alias
+                'pickup'
+            ])
             ->orderBy('created_at', 'desc')
             ->get();
         return view('history', compact('pesanans'));
