@@ -18,9 +18,9 @@ trait Fileable
     {
         if ($reset || !isset($this->files[$field])) {
             $file = File::where([
-                'parent_id'     => $this->id,
-                'parent_table'  => $this->getTable(),
-                'parent_field'  => $field,
+                'parent_id' => $this->id,
+                'parent_table' => $this->getTable(),
+                'parent_field' => $field,
             ])
                 ->orderBy('id', 'desc')
                 ->first();
@@ -28,9 +28,9 @@ trait Fileable
             if (empty($file)) {
                 $file = new File();
                 $file->fill([
-                    'parent_id'     => $this->id,
-                    'parent_table'  => $this->getTable(),
-                    'parent_field'  => $field,
+                    'parent_id' => $this->id,
+                    'parent_table' => $this->getTable(),
+                    'parent_field' => $field,
                 ]);
             }
 
@@ -49,9 +49,9 @@ trait Fileable
 
         if ($reset || !isset($this->files[$key])) {
             $this->files[$key] = File::where([
-                'parent_id'     => $this->id,
-                'parent_table'  => $this->getTable(),
-                'parent_field'  => $field,
+                'parent_id' => $this->id,
+                'parent_table' => $this->getTable(),
+                'parent_field' => $field,
             ])
                 ->orderBy('id', 'desc')
                 ->get();
@@ -137,21 +137,31 @@ trait Fileable
             $extension = $uploadedFile->getClientOriginalExtension();
             $filePath = $path . "/" . $name . "." . $extension;
 
+            // Upload to DigitalOcean Spaces
+            $uploaded = Storage::disk('spaces')->put(
+                $filePath,
+                file_get_contents($uploadedFile->getRealPath()),
+                'public' // ACL: public-read
+            );
+
+            if (!$uploaded) {
+                Log::error('Spaces upload failed for: ' . $filePath);
+                return null;
+            }
+
+            // Get full CDN URL
+            $url = Storage::disk('spaces')->url($filePath);
+
             // Save to database
             $modelFile = File::create([
-                'parent_id'     => $this->id,
-                'parent_table'  => $this->getTable(),
-                'parent_field'  => $field,
-                'name'          => $uploadedFile->getClientOriginalName(),
-                'mime'          => $uploadedFile->getMimeType(),
-                'path'          => $filePath,
+                'parent_id' => $this->id,
+                'parent_table' => $this->getTable(),
+                'parent_field' => $field,
+                'name' => $uploadedFile->getClientOriginalName(),
+                'mime' => $uploadedFile->getMimeType(),
+                'path' => $filePath,       // Relative path (for deletion)
+                'full_url' => $url,            // Full CDN URL
             ]);
-
-            // Save to storage
-            Storage::disk('public')->put(
-                $filePath,
-                file_get_contents($uploadedFile->getRealPath())
-            );
 
             // Update cache
             $this->files[$field] = $modelFile;
@@ -169,13 +179,23 @@ trait Fileable
     protected function deleteFilesByField($field)
     {
         $existingFiles = File::where([
-            'parent_id'     => $this->id,
-            'parent_table'  => $this->getTable(),
-            'parent_field'  => $field,
+            'parent_id' => $this->id,
+            'parent_table' => $this->getTable(),
+            'parent_field' => $field,
         ])->get();
 
         foreach ($existingFiles as $file) {
-            $file->delete(); // Will trigger auto delete in File model boot
+            // Delete from Spaces
+            if (!empty($file->path)) {
+                try {
+                    Storage::disk('spaces')->delete($file->path);
+                } catch (\Exception $e) {
+                    Log::error('Spaces delete failed: ' . $e->getMessage());
+                }
+            }
+
+            // Delete DB record
+            $file->delete();
         }
 
         // Clear cache

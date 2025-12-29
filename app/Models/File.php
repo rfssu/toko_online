@@ -8,7 +8,16 @@ use Illuminate\Support\Facades\Storage;
 class File extends Model
 {
     protected $table = 'file';
-    protected $guarded = [];
+    protected $fillable = [
+        'parent_id',
+        'parent_table',
+        'parent_field',
+        'name',
+        'mime',
+        'path',
+        'keterangan',
+        'full_url', // ← For Spaces CDN URL
+    ];
 
     protected $casts = [
         'created_at' => 'datetime',
@@ -24,7 +33,18 @@ class File extends Model
             return false;
         }
 
-        return Storage::disk('public')->exists($this->path);
+        // Check if Spaces URL (CDN URL or direct)
+        if (!empty($this->full_url) && str_contains($this->full_url, 'digitaloceanspaces.com')) {
+            return true; // Spaces file assumed to exist
+        }
+
+        // Fallback: check on Spaces disk
+        try {
+            return Storage::disk('spaces')->exists($this->path);
+        } catch (\Exception $e) {
+            // Fallback to local storage for old files
+            return Storage::disk('public')->exists($this->path);
+        }
     }
 
     /**
@@ -54,6 +74,22 @@ class File extends Model
         if (empty($this->id)) {
             return null;
         }
+
+        // Return CDN URL directly if exists
+        if (!empty($this->full_url)) {
+            return $this->full_url;
+        }
+
+        // Fallback: generate Spaces URL
+        if (!empty($this->path)) {
+            try {
+                return Storage::disk('spaces')->url($this->path);
+            } catch (\Exception $e) {
+                // Fallback to local preview route
+                return route('file.preview', ['file' => $this->id]);
+            }
+        }
+
         return route('file.preview', ['file' => $this->id]);
     }
 
@@ -88,7 +124,17 @@ class File extends Model
 
         // Auto delete file when record deleted
         static::deleting(function ($file) {
-            $file->deleteFile();
+            if (!empty($file->path)) {
+                try {
+                    // Try delete from Spaces first
+                    Storage::disk('spaces')->delete($file->path);
+                } catch (\Exception $e) {
+                    // Fallback: delete from local storage
+                    if (Storage::disk('public')->exists($file->path)) {
+                        Storage::disk('public')->delete($file->path);
+                    }
+                }
+            }
         });
     }
 }
