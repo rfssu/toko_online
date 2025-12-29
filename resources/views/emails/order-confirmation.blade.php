@@ -166,6 +166,7 @@
             <table class="items-table">
                 <thead>
                     <tr>
+                        <th>No.</th>
                         <th>Produk</th>
                         <th style="text-align: center;">Qty</th>
                         <th style="text-align: right;">Harga</th>
@@ -173,16 +174,28 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach($pesanan->pesanan_detail as $detail)
+                    @foreach ($pesanan->pesanan_detail as $detail)
                         <tr>
-                            <td>{{ $detail->barang->nama_barang }}</td>
-                            <td style="text-align: center;">{{ $detail->jumlah }}</td>
-                            <td style="text-align: right;">Rp {{ number_format($detail->harga, 0, ',', '.') }}</td>
-                            <td style="text-align: right;">Rp {{ number_format($detail->total, 0, ',', '.') }}</td>
+                            <td style="padding: 12px; border-bottom: 1px solid #e5e7eb;">
+                                {{ $loop->iteration }}
+                            </td>
+                            <td style="padding: 12px; border-bottom: 1px solid #e5e7eb;">
+                                {{ $detail->barang?->nama_barang ?? 'Produk Dihapus' }}
+                            </td>
+                            <td style="padding: 12px; border-bottom: 1px solid #e5e7eb; text-align: center;">
+                                {{ $detail->jumlah }}
+                            </td>
+                            <td style="padding: 12px; border-bottom: 1px solid #e5e7eb; text-align: right;">
+                                Rp {{ number_format($detail->harga, 0, ',', '.') }}
+                            </td>
+                            <td
+                                style="padding: 12px; border-bottom: 1px solid #e5e7eb; text-align: right; font-weight: bold;">
+                                Rp {{ number_format($detail->total, 0, ',', '.') }}
+                            </td>
                         </tr>
                     @endforeach
                     <tr class="total-row">
-                        <td colspan="3" style="text-align: right;">Total Pembayaran</td>
+                        <td colspan="4" style="text-align: right;">Total Pembayaran</td>
                         <td style="text-align: right;">Rp {{ number_format($pesanan->total, 0, ',', '.') }}</td>
                     </tr>
                 </tbody>

@@ -8,7 +8,8 @@
     <div class="bg-gradient-to-br from-amber-50 via-orange-50 to-amber-100">
         <div class="container mx-auto px-4 md:px-8 py-8">
             <div class="text-center">
-                <span class="bg-amber-600 text-white text-xs font-bold px-4 py-1.5 rounded-full mb-4 inline-block shadow-lg">
+                <span
+                    class="bg-amber-600 text-white text-xs font-bold px-4 py-1.5 rounded-full mb-4 inline-block shadow-lg">
                     <i class="fa-solid fa-clock-rotate-left"></i> Riwayat Pesanan
                 </span>
                 <h1 class="text-3xl md:text-4xl font-bold leading-tight mb-3 text-gray-900">
@@ -31,15 +32,16 @@
                                     <div class="flex-1">
                                         <div class="flex items-center gap-3 mb-2">
                                             <h3 class="font-bold text-lg">Order #{{ $pesanan->kode }}</h3>
-                                            <span class="badge badge-lg text-white 
-                                                                        {{ $pesanan->status == Pesanan::STATUS_CO ? 'badge-info' : '' }}
-                                                                        {{ $pesanan->status == Pesanan::STATUS_PICKUP ? 'badge-success' : '' }}
-                                                                        {{ $pesanan->status == Pesanan::STATUS_PENDING ? 'badge-warning' : '' }}">
+                                            <span
+                                                class="badge badge-lg text-white 
+                                                                                    {{ $pesanan->status == Pesanan::STATUS_CO ? 'badge-info' : '' }}
+                                                                                    {{ $pesanan->status == Pesanan::STATUS_PICKUP ? 'badge-success' : '' }}
+                                                                                    {{ $pesanan->status == Pesanan::STATUS_PENDING ? 'badge-warning' : '' }}">
                                                 <i class="fa-solid 
-                                                                            {{ $pesanan->status == Pesanan::STATUS_CO ? 'fa-box' : '' }}
-                                                                            {{ $pesanan->status == Pesanan::STATUS_PICKUP ? 'fa-check' : '' }}
-                                                                            {{ $pesanan->status == Pesanan::STATUS_PENDING ? 'fa-clock' : '' }}
-                                                                            mr-1"></i>
+                                                                                        {{ $pesanan->status == Pesanan::STATUS_CO ? 'fa-box' : '' }}
+                                                                                        {{ $pesanan->status == Pesanan::STATUS_PICKUP ? 'fa-check' : '' }}
+                                                                                        {{ $pesanan->status == Pesanan::STATUS_PENDING ? 'fa-clock' : '' }}
+                                                                                        mr-1"></i>
                                                 {{ $pesanan->status_val }}
                                             </span>
                                         </div>
@@ -71,7 +73,7 @@
                                 <div class="flex flex-wrap gap-2">
                                     @foreach ($pesanan->pesanan_detail->take(3) as $detail)
                                         <div class="badge badge-lg badge-ghost">
-                                            {{ $detail->barang->nama_barang }} ({{ $detail->jumlah }}x)
+                                            {{ $detail->barang?->nama_barang ?? 'Produk Dihapus' }} ({{ $detail->jumlah }}x)
                                         </div>
                                     @endforeach
                                     @if ($pesanan->pesanan_detail->count() > 3)
@@ -89,7 +91,8 @@
                                             Bayar Sekarang
                                         </button>
                                     @endif
-                                    <a href="{{ route('history.detail', $pesanan->id) }}" class="btn bg-amber-600 hover:bg-amber-700 text-white border-none btn-sm">
+                                    <a href="{{ route('history.detail', $pesanan->id) }}"
+                                        class="btn bg-amber-600 hover:bg-amber-700 text-white border-none btn-sm">
                                         <i class="fa-solid fa-eye"></i>
                                         Detail
                                     </a>
@@ -105,7 +108,8 @@
                         <i class="fa-solid fa-box-open text-6xl text-gray-300 mb-4"></i>
                         <h2 class="text-2xl font-bold text-gray-800 mb-2">Belum Ada Pesanan</h2>
                         <p class="text-gray-600 mb-6">Anda belum memiliki riwayat pesanan</p>
-                        <a href="{{ route('produk') }}" class="btn bg-amber-600 hover:bg-amber-700 text-white border-none w-full max-w-xs mx-auto">
+                        <a href="{{ route('produk') }}"
+                            class="btn bg-amber-600 hover:bg-amber-700 text-white border-none w-full max-w-xs mx-auto">
                             <i class="fa-solid fa-shopping-bag"></i>
                             Mulai Belanja
                         </a>
@@ -119,24 +123,25 @@
     @if (config('midtrans.is_production'))
         <script src="https://app.midtrans.com/snap/snap.js" data-client-key="{{ config('midtrans.client_key') }}"></script>
     @else
-        <script src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key="{{ config('midtrans.client_key') }}"></script>
+        <script src="https://app.sandbox.midtrans.com/snap/snap.js"
+            data-client-key="{{ config('midtrans.client_key') }}"></script>
     @endif
 
     <script>
         function retryPayment(snapToken) {
             snap.pay(snapToken, {
-                onSuccess: function(result) {
+                onSuccess: function (result) {
                     fetch('/payment/update-status', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                            },
-                            body: JSON.stringify({
-                                order_id: result.order_id,
-                                payment_type: result.payment_type
-                            })
-                        }).then(response => response.json())
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        },
+                        body: JSON.stringify({
+                            order_id: result.order_id,
+                            payment_type: result.payment_type
+                        })
+                    }).then(response => response.json())
                         .then(() => {
                             Swal.fire({
                                 icon: 'success',
@@ -147,7 +152,7 @@
                             });
                         });
                 },
-                onPending: function(result) {
+                onPending: function (result) {
                     Swal.fire({
                         icon: 'info',
                         title: 'Pembayaran Pending',
@@ -156,14 +161,14 @@
                         window.location.reload();
                     });
                 },
-                onError: function(result) {
+                onError: function (result) {
                     Swal.fire({
                         icon: 'error',
                         title: 'Pembayaran Gagal',
                         text: 'Terjadi kesalahan, silahkan coba lagi',
                     });
                 },
-                onClose: function() {
+                onClose: function () {
                     console.log('Payment popup closed');
                 }
             });

@@ -30,15 +30,16 @@
                         {{-- Status --}}
                         <div class="text-center md:text-left">
                             <p class="text-sm text-gray-600 mb-2">Status Pesanan</p>
-                            <span class="badge badge-lg text-white
-                                                {{ $pesanan->status == Pesanan::STATUS_CO ? 'badge-info' : '' }}
-                                                {{ $pesanan->status == Pesanan::STATUS_PICKUP ? 'badge-success' : '' }}
-                                                {{ $pesanan->status == Pesanan::STATUS_PENDING ? 'badge-warning' : '' }}">
+                            <span
+                                class="badge badge-lg text-white
+                                                    {{ $pesanan->status == Pesanan::STATUS_CO ? 'badge-info' : '' }}
+                                                    {{ $pesanan->status == Pesanan::STATUS_PICKUP ? 'badge-success' : '' }}
+                                                    {{ $pesanan->status == Pesanan::STATUS_PENDING ? 'badge-warning' : '' }}">
                                 <i class="fa-solid 
-                                                    {{ $pesanan->status == Pesanan::STATUS_CO ? 'fa-box' : '' }}
-                                                    {{ $pesanan->status == Pesanan::STATUS_PICKUP ? 'fa-check' : '' }}
-                                                    {{ $pesanan->status == Pesanan::STATUS_PENDING ? 'fa-clock' : '' }}
-                                                    mr-1"></i>
+                                                        {{ $pesanan->status == Pesanan::STATUS_CO ? 'fa-box' : '' }}
+                                                        {{ $pesanan->status == Pesanan::STATUS_PICKUP ? 'fa-check' : '' }}
+                                                        {{ $pesanan->status == Pesanan::STATUS_PENDING ? 'fa-clock' : '' }}
+                                                        mr-1"></i>
                                 {{ $pesanan->status_val }}
                             </span>
                         </div>
@@ -79,13 +80,13 @@
                                     {{-- Product Image --}}
                                     <div class="avatar">
                                         <div class="w-20 h-20 rounded-lg">
-                                            @if($detail->barang->file('gambar')->hasFile())
+                                            @if($detail->barang && $detail->barang->file('gambar')->hasFile())
                                                 <img src="{{ $detail->barang->file('gambar')->preview() }}"
                                                     alt="{{ $detail->barang->nama_barang }}" class="object-cover">
                                             @else
                                                 <div class="bg-gray-300 w-full h-full flex items-center justify-center">
-                                                    <img src="{{ Vite::asset('resources/assets/photos/bakpia.jpg') }}"
-                                                        alt="{{ $detail->barang->nama_barang }}" class="object-cover">
+                                                    <img src="{{ Vite::asset('resources/assets/photos/bakpia.jpg') }}" alt="Produk"
+                                                        class="object-cover">
                                                 </div>
                                             @endif
                                         </div>
@@ -93,7 +94,7 @@
 
                                     {{-- Product Info --}}
                                     <div class="flex-1">
-                                        <h3 class="font-bold text-lg">{{ $detail->barang->nama_barang }}</h3>
+                                        <h3 class="font-bold text-lg">{{ $detail->barang?->nama_barang ?? 'Produk Dihapus' }}</h3>
                                         <p class="text-sm text-gray-600">
                                             {{ $detail->jumlah }} x Rp {{ number_format($detail->harga, 0, ',', '.') }}
                                         </p>
