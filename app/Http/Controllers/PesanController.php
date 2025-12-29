@@ -115,9 +115,9 @@ class PesanController extends Controller
 
         // Move items from cart to pesanan_detail
         foreach ($pesanan_details as $detail) {
-            $detail->update([
-                'pesanan_id' => $pesanan->id,
-            ]);
+            $detail->harga = $detail->barang->harga; // ← CRITICAL: Save frozen price!
+            $detail->pesanan_id = $pesanan->id;
+            $detail->saveOrFail();
         }
 
         // Get Midtrans snap token
