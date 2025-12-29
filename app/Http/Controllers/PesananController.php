@@ -200,9 +200,16 @@ class PesananController extends Controller
         try {
             $pesanan = Pesanan::findOrFail($id);
 
-            // Only allow if currently preparing
-            if ($pesanan->status !== Pesanan::STATUS_PREPARING) {
-                return back()->with('error', 'Order harus dalam status "Sedang Disiapkan"');
+            // Allow for preparing, co (legacy), ready (already ready), checkout (old paid status)
+            $allowedStatuses = ['preparing', 'co', 'ready', 'checkout'];
+
+            if (!in_array($pesanan->status, $allowedStatuses)) {
+                return back()->with('error', 'Order tidak bisa diproses. Status saat ini: ' . $pesanan->status_val);
+            }
+
+            // Don't allow if already picked up
+            if ($pesanan->status === 'pickup') {
+                return back()->with('error', 'Order sudah selesai dipickup');
             }
 
             // Mark as ready (will send email automatically)

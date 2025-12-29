@@ -104,13 +104,13 @@ class PesanController extends Controller
             return redirect('/');
         }
 
-        // Create pesanan with pickup time
+        // Create pesanan with auto pickup time (3 hours from now)
         $kode = 'ORD-' . date('ymd') . '-' . uniqid();
         $pesanan = Pesanan::lockForUpdate()->create([
             'kode' => $kode,
             'user_id' => $user->id,
             'status' => Pesanan::STATUS_PENDING,
-            'tanggal_pickup' => $request->input('pickup_time'), // Save selected pickup time
+            'tanggal_pickup' => now()->addHours(3), // Auto set: ASAP (3 hours preparation)
         ]);
 
         // Move items from cart to pesanan_detail

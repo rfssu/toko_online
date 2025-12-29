@@ -110,38 +110,12 @@
                                 </div>
                             </div>
 
-                            {{-- Pickup Time Slot Selection --}}
-                            <div class="form-control mb-4">
-                                <label class="label">
-                                    <span class="label-text font-semibold">
-                                        <i class="fa-solid fa-calendar-days text-amber-600"></i>
-                                        Waktu Pengambilan
-                                    </span>
-                                </label>
-                                <select id="pickup_time_slot" class="select select-bordered w-full" required>
-                                    <option value="">Pilih waktu pengambilan...</option>
-                                    @php
-                                        $slots = \App\Helpers\PickupTimeHelper::getAvailableSlots();
-                                    @endphp
-                                    @foreach($slots as $slot)
-                                        <option value="{{ $slot['datetime'] }}" {{ !$slot['available'] ? 'disabled' : '' }}>
-                                            {{ $slot['label'] }}
-                                            @if(!$slot['available']) (Penuh) @endif
-                                        </option>
-                                    @endforeach
-                                </select>
-                                <label class="label">
-                                    <span class="label-text-alt text-gray-500">
-                                        <i class="fa-solid fa-info-circle"></i>
-                                        Pilih waktu Anda akan mengambil pesanan
-                                    </span>
-                                </label>
-                            </div>
 
+                            {{-- Checkout Info --}}
                             <div class="bg-amber-50 p-3 rounded-lg mb-4">
                                 <p class="text-xs text-gray-700">
                                     <i class="fa-solid fa-info-circle text-amber-600"></i>
-                                    Pesanan akan disiapkan setelah pembayaran berhasil. Ambil di toko sesuai waktu yang dipilih.
+                                    Pesanan akan disiapkan setelah pembayaran berhasil. Ambil di toko setelah mendapat pesan siap diambil.
                                 </p>
                             </div>
 
@@ -207,18 +181,6 @@
 
         // Checkout with Midtrans Snap
         function confirmCheckout() {
-            // Validate time slot selection
-            const pickupTimeSlot = document.getElementById('pickup_time_slot');
-            if (!pickupTimeSlot.value) {
-                Swal.fire({
-                    icon: 'warning',
-                    title: 'Pilih Waktu Pengambilan',
-                    text: 'Mohon pilih waktu pengambilan pesanan Anda',
-                    confirmButtonColor: '#d97706'
-                });
-                return;
-            }
-
             Swal.fire({
                 title: 'Konfirmasi Pesanan',
                 text: 'Anda akan melanjutkan ke pembayaran',
@@ -249,7 +211,7 @@
                             'X-Requested-With': 'XMLHttpRequest'
                         },
                         body: JSON.stringify({
-                            pickup_time: pickupTimeSlot.value
+                            // No pickup time needed - backend sets default
                         })
                     })
                         .then(response => response.json())

@@ -1,13 +1,22 @@
 @php
     $formHref = fn($model) => route('pesanans.update', $model->id);
-    // dd($model);
+    $markReadyHref = fn($model) => route('pesanans.markReady', $model->id);
 
-    $statusCo = $model->status === 'co';
+    $statusPreparing = $model->status === 'preparing';
+    $statusCo = $model->status === 'co' || $model->status === 'ready';
     $statusPickup = $model->status === 'pickup';
 @endphp
 
 <div class="p-6">
-    <h2 class="text-2xl font-bold mb-6">{{ $statusCo ? 'Konfirmasi Pesanan' : 'Detail Pesanan' }}</h2>
+    <h2 class="text-2xl font-bold mb-6">
+        @if ($statusPreparing)
+            Detail Pesanan - Sedang Disiapkan
+        @elseif ($statusCo)
+            Detail Pesanan - Siap Dipickup
+        @else
+            Detail Pesanan
+        @endif
+    </h2>
 
     {{-- Ringkasan Pesanan --}}
     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
@@ -88,7 +97,17 @@
     </div>
 
     {{-- Aksi --}}
-    @if ($statusCo)
+    @if ($statusPreparing)
+        {{-- Tombol Mark as Ready untuk status preparing --}}
+        <form action="{{ $markReadyHref($model) }}" method="POST" id="form-elem" class="flex justify-end gap-2">
+            @csrf
+            <button class="btn btn-info text-white" type="submit">
+                <i class="ri-check-double-line"></i>
+                Tandai Siap untuk Pickup
+            </button>
+        </form>
+    @elseif ($statusCo)
+        {{-- Tombol Konfirmasi Pickup untuk status ready/co --}}
         <form action="{{ $formHref($model) }}" method="POST" id="form-elem" class="flex justify-end">
             @csrf
             @method('PUT')
