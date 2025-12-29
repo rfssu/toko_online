@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Helpers\AutoFill;
 use Illuminate\Http\Request;
 use App\Models\Barang;
+use App\Services\MidtransService;
 use App\Models\Pesanan;
 use App\Models\PesananDetail;
 use Carbon\Carbon;
@@ -103,45 +104,48 @@ class PesanController extends Controller
             return redirect('/');
         }
 
-        // Create pesanan
-        $prefix = 'CO-' . now()->format('ymd');
+        // Create pesanan with pickup time
+        $kode = 'ORD-' . date('ymd') . '-' . uniqid();
+        $pesanan = Pesanan::lockForUpdate()->create([
+            'kode' => $kode,
+            'user_id' => $user->id,
+            'status' => Pesanan::STATUS_PENDING,
+            'tanggal_pickup' => $request->input('pickup_time'), // Save selected pickup time
+        ]);
 
-        $pesanan = new Pesanan;
-        $pesanan->kode = $prefix . '-' . uniqid();
-        $pesanan->user_id = $user->id;
-        $pesanan->status = Pesanan::STATUS_PENDING;
-        $pesanan->saveOrFail();
+        // Move items from cart to pesanan_detail
+        foreach ($pesanan_details as $detail) {
+            $detail->update([
+                'pesanan_id' => $pesanan->id,
+            ]);
+        }
 
-        $pesanan_details->each(function ($pesanan_detail) use ($pesanan) {
-            $pesanan_detail->harga = $pesanan_detail->barang->harga;
-            $pesanan_detail->pesanan_id = $pesanan->id;
-            $pesanan_detail->saveOrFail();
-        });
-        // Create Midtrans Snap token
+        // Get Midtrans snap token
         try {
-            $midtransService = new \App\Services\MidtransService();
+            $midtransService = new MidtransService();
 
             // Build transaction params
             $itemDetails = [];
             foreach ($pesanan->pesanan_detail as $detail) {
+                // Use data from pesanan_detail (not barang) to handle deleted products
                 $itemDetails[] = [
-                    'id' => $detail->barang->id,
-                    'price' => $detail->barang->harga,
-                    'quantity' => $detail->jumlah,
-                    'name' => $detail->barang->nama_barang,
+                    'id' => $detail->id,
+                    'price' => (int) $detail->harga,
+                    'quantity' => (int) $detail->jumlah,
+                    'name' => $detail->barang?->nama_barang ?? 'Produk (ID: ' . $detail->id . ')',
                 ];
             }
 
             $params = [
                 'transaction_details' => [
                     'order_id' => $pesanan->kode,
-                    'gross_amount' => $pesanan->total,
+                    'gross_amount' => (int) $pesanan->total,
                 ],
                 'item_details' => $itemDetails,
                 'customer_details' => [
-                    'first_name' => $pesanan->user->name,
-                    'email' => $pesanan->user->email,
-                    'phone' => $pesanan->user->no_hp ?? '08123456789',
+                    'first_name' => $user->name,
+                    'email' => $user->email,
+                    'phone' => $user->no_hp ?? '08123456789',
                 ],
             ];
 

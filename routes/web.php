@@ -83,6 +83,9 @@ Route::middleware('user.status')->group(function () {
             Route::post('/pesanans/verify-qr', [PesananController::class, 'verifyQr'])->name('pesanans.verify-qr');
             Route::post('/pesanans/confirm-pickup-qr', [PesananController::class, 'confirmPickupFromQr'])->name('pesanans.confirm-pickup-qr');
 
+            // Mark order as ready for pickup
+            Route::post('/pesanans/{id}/mark-ready', [PesananController::class, 'markReady'])->name('pesanans.markReady');
+
             // Resource routes
 
             Route::resource('users', UserController::class)->middleware(['role:admin']);

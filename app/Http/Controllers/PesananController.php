@@ -191,4 +191,27 @@ class PesananController extends Controller
             ], 500);
         }
     }
+
+    /**
+     * Mark order as ready for pickup (admin action)
+     */
+    public function markReady($id)
+    {
+        try {
+            $pesanan = Pesanan::findOrFail($id);
+
+            // Only allow if currently preparing
+            if ($pesanan->status !== Pesanan::STATUS_PREPARING) {
+                return back()->with('error', 'Order harus dalam status "Sedang Disiapkan"');
+            }
+
+            // Mark as ready (will send email automatically)
+            $pesanan->markAsReady();
+
+            return back()->with('success', 'Order ditandai siap pickup. Email notifikasi telah dikirim ke customer.');
+
+        } catch (\Exception $e) {
+            return back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
+        }
+    }
 }

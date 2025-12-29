@@ -186,11 +186,11 @@ class PaymentController extends Controller
             // Eager load with null-safe check
             $pesanan->load(['pesanan_detail.barang', 'user']);
 
-            Mail::send('emails.order-confirmation', [
+            Mail::send('emails.order-payment-success', [
                 'pesanan' => $pesanan
             ], function ($message) use ($pesanan) {
                 $message->to($pesanan->user->email);
-                $message->subject('Konfirmasi Pesanan #' . $pesanan->kode . ' - Toko Online Khas Jogja');
+                $message->subject('Pembayaran Berhasil! #' . $pesanan->kode . ' - Toko Online Khas Jogja');
             });
         } catch (\Exception $e) {
             // Log error but don't fail the payment

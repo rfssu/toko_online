@@ -27,12 +27,16 @@ class Pesanan extends Model
     ];
 
     public const STATUS_PENDING = 'pending_payment';
-    public const STATUS_CO = 'co';
+    public const STATUS_PREPARING = 'preparing';
+    public const STATUS_READY = 'ready';
+    public const STATUS_CO = 'ready'; // Alias for backward compatibility
     public const STATUS_PICKUP = 'pickup';
 
     public const STATUS = [
         self::STATUS_PENDING => 'Menunggu Pembayaran',
-        self::STATUS_CO => 'Sudah Dibayar & Siap Dipickup',
+        self::STATUS_PREPARING => 'Sedang Disiapkan',
+        self::STATUS_READY => 'Siap Dipickup',
+        'co' => 'Siap Dipickup', // Legacy support
         self::STATUS_PICKUP => 'Selesai',
     ];
 
@@ -65,9 +69,47 @@ class Pesanan extends Model
     }
     public function markAsPaid(string $paymentType): void
     {
-        $this->status = self::STATUS_CO;
+        $this->status = self::STATUS_PREPARING;
         $this->payment_type = $paymentType;
         $this->save();
+    }
+
+    /**
+     * Mark order as preparing (after payment)
+     */
+    public function markAsPreparing(): void
+    {
+        $this->status = self::STATUS_PREPARING;
+        $this->save();
+    }
+
+    /**
+     * Mark order as ready for pickup (send email notification)
+     */
+    public function markAsReady(): void
+    {
+        $this->status = self::STATUS_READY;
+        $this->save();
+
+        // Send ready for pickup email
+        $this->sendReadyForPickupEmail();
+    }
+
+    /**
+     * Send ready for pickup email notification
+     */
+    protected function sendReadyForPickupEmail(): void
+    {
+        try {
+            \Illuminate\Support\Facades\Mail::send('emails.order-ready-pickup', [
+                'pesanan' => $this->load(['pesanan_detail.barang', 'user'])
+            ], function ($message) {
+                $message->to($this->user->email);
+                $message->subject('Pesanan Siap Dipickup! #' . $this->kode . ' - Toko Online Khas Jogja');
+            });
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error('Ready for pickup email failed: ' . $e->getMessage());
+        }
     }
 
     /**
