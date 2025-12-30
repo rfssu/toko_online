@@ -66,25 +66,65 @@
                                         {{-- Mark as Ready button - Opens modal like other statuses --}}
                                         <a href="{{ $editRoute($model) }}" onclick="modalFormAjax(this, event)"
                                             data-modal-size="large" class="btn btn-info btn-sm text-white">
-                                            <i class="ri-check-double-line"></i>
+                                            <i class="ri-check-line"></i>
                                         </a>
                                     @elseif ($model->status === 'ready' || $model->status === 'co')
                                         {{-- View Details / Confirm Pickup --}}
                                         <a href="{{ $editRoute($model) }}" onclick="modalFormAjax(this, event)"
                                             data-modal-size="large" class="btn btn-success btn-sm text-white">
-                                            <i class="ri-check-line"></i>
+                                            <i class="ri-check-double-line"></i>
                                         </a>
                                     @elseif ($model->status === 'pickup')
                                         {{-- View History Only --}}
                                         <a href="{{ $editRoute($model) }}" onclick="modalFormAjax(this, event)"
-                                            data-modal-size="large" class="btn btn-warning btn-sm text-white">
+                                            data-modal-size="large" class="btn btn-neutral btn-sm text-white">
                                             <i class="ri-article-line"></i>
                                         </a>
                                     @endif
                                 </td>
                                 <td>{{ $model->kode }}</td>
                                 <td>{{ $model->user->name }}</td>
-                                <td>{{ $model->status_val }}</td>
+                                <td>
+                                    <span class="badge text-white
+                                        @switch($model->status)
+                                            @case('pending_payment')
+                                                badge-warning
+                                                @break
+                                            @case('preparing')
+                                                badge-info
+                                                @break
+                                            @case('ready')
+                                            @case('co')
+                                                badge-success
+                                                @break
+                                            @case('pickup')
+                                                badge-neutral
+                                                @break
+                                            @default
+                                                badge-ghost
+                                        @endswitch">
+                                        <i class="fa-solid 
+                                            @switch($model->status)
+                                                @case('pending_payment')
+                                                    fa-credit-card
+                                                    @break
+                                                @case('preparing')
+                                                    fa-gears
+                                                    @break
+                                                @case('ready')
+                                                @case('co')
+                                                    fa-box-open
+                                                    @break
+                                                @case('pickup')
+                                                    fa-circle-check
+                                                    @break
+                                                @default
+                                                    fa-question
+                                            @endswitch
+                                            mr-1"></i>
+                                        {{ $model->status_val }}
+                                    </span>
+                                </td>
                                 <td>{{ $model->user->no_hp }}</td>
                                 <td>{{ $model->toPic->name ?? '-' }}</td>
                             </tr>

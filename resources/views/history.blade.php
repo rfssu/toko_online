@@ -32,16 +32,43 @@
                                     <div class="flex-1">
                                         <div class="flex items-center gap-3 mb-2">
                                             <h3 class="font-bold text-lg">Order #{{ $pesanan->kode }}</h3>
-                                            <span
-                                                class="badge badge-lg text-white 
-                                                                                    {{ $pesanan->status == Pesanan::STATUS_CO ? 'badge-info' : '' }}
-                                                                                    {{ $pesanan->status == Pesanan::STATUS_PICKUP ? 'badge-success' : '' }}
-                                                                                    {{ $pesanan->status == Pesanan::STATUS_PENDING ? 'badge-warning' : '' }}">
+                                            <span class="badge badge-lg text-white
+                                                @switch($pesanan->status)
+                                                    @case(Pesanan::STATUS_PENDING)
+                                                        badge-warning
+                                                        @break
+                                                    @case(Pesanan::STATUS_PREPARING)
+                                                        badge-info
+                                                        @break
+                                                    @case(Pesanan::STATUS_READY)
+                                                    @case('co')
+                                                        badge-success
+                                                        @break
+                                                    @case(Pesanan::STATUS_PICKUP)
+                                                        badge-neutral
+                                                        @break
+                                                    @default
+                                                        badge-ghost
+                                                @endswitch">
                                                 <i class="fa-solid 
-                                                                                        {{ $pesanan->status == Pesanan::STATUS_CO ? 'fa-box' : '' }}
-                                                                                        {{ $pesanan->status == Pesanan::STATUS_PICKUP ? 'fa-check' : '' }}
-                                                                                        {{ $pesanan->status == Pesanan::STATUS_PENDING ? 'fa-clock' : '' }}
-                                                                                        mr-1"></i>
+                                                    @switch($pesanan->status)
+                                                        @case(Pesanan::STATUS_PENDING)
+                                                            fa-credit-card
+                                                            @break
+                                                        @case(Pesanan::STATUS_PREPARING)
+                                                            fa-gears
+                                                            @break
+                                                        @case(Pesanan::STATUS_READY)
+                                                        @case('co')
+                                                            fa-box-open
+                                                            @break
+                                                        @case(Pesanan::STATUS_PICKUP)
+                                                            fa-circle-check
+                                                            @break
+                                                        @default
+                                                            fa-question
+                                                    @endswitch
+                                                    mr-1"></i>
                                                 {{ $pesanan->status_val }}
                                             </span>
                                         </div>
