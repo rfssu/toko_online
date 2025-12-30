@@ -29,19 +29,19 @@ class HomeController extends Controller
     public function produk(Request $request)
     {
         $sortBy = match ($request->input('filter')) {
-            'popular'    => 'id',
-            'price_low'  => 'harga',
+            'popular' => 'id',
+            'price_low' => 'harga',
             'price_high' => 'harga',
-            'newest'     => 'created_at',
-            default      => 'created_at',
+            'newest' => 'created_at',
+            default => 'created_at',
         };
 
         $sortDir = match ($request->input('filter')) {
             'price_high' => 'desc',
-            'newest'     => 'desc',
-            'popular'    => 'asc',
-            'price_low'  => 'asc',
-            default      => 'desc',
+            'newest' => 'desc',
+            'popular' => 'asc',
+            'price_low' => 'asc',
+            default => 'desc',
         };
 
         $request->merge([
@@ -127,5 +127,30 @@ class HomeController extends Controller
         $user->save();
         // 5. REDIRECT DENGAN PESAN SUKSES
         return redirect()->route('profile')->with('success', 'Password berhasil diubah!');
+    }
+
+    /**
+     * Upload profile avatar
+     */
+    public function avatar(Request $request)
+    {
+        $request->validate([
+            'upload_foto_profil' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+        ]);
+
+        $user = Auth::user();
+
+        if ($request->hasFile('upload_foto_profil')) {
+            // Delete old avatar  
+            $oldFile = $user->file('foto_profil');
+            if ($oldFile && $oldFile->hasFile()) {
+                $oldFile->delete();
+            }
+
+            // Save using Fileable trait
+            $user->saveAllFiles($request, true);
+        }
+
+        return redirect()->route('profile')->with('success', 'Foto profil berhasil diupdate!');
     }
 }

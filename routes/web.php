@@ -53,6 +53,7 @@ Route::middleware('user.status')->group(function () {
         Route::get('/profile', [HomeController::class, 'profile'])->name('profile');
         Route::post('/profile/update', [HomeController::class, 'updateProfile'])->name('profile.update');
         Route::post('/profile/password', [HomeController::class, 'updatePassword'])->name('profile.password');
+        Route::post('/profile/avatar', [HomeController::class, 'avatar'])->name('profile.avatar');
         // BUYER - Cart Routes
         Route::post('/cart/add', [PesanController::class, 'addToCartAjax'])->name('cart.add');
         Route::get('/check-out', [PesanController::class, 'check_out'])->name('checkout');

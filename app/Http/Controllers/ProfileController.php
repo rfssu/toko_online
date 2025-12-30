@@ -46,4 +46,25 @@ class ProfileController extends Controller
     {
         return User::where($params)->firstOrFail();
     }
+
+    /**
+     * Upload profile avatar
+     */
+    public function avatar(Request $request)
+    {
+        $request->validate([
+            'foto_profil' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+        ]);
+
+        $user = Auth::user();
+
+        // Handle file upload using Fileable trait
+        if ($request->hasFile('foto_profil')) {
+            $user->foto_profil = $request->file('foto_profil');
+            $user->save();
+        }
+
+        Alert::success('Foto profil berhasil diupdate!', 'Berhasil');
+        return redirect()->route('profile');
+    }
 }
